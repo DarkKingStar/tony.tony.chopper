@@ -1,8 +1,11 @@
 {
   "name": "anidark-backend",
   "version": "1.0.0",
-  "description": "Anime Streaming, Discovery API made with Cheerio and Express. Uses data from Gogoanime",
+  "description": "backend server for Anime Streaming, Discovery API made with Express. Uses data from Gogoanime",
   "main": "main.js",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node main.js"
