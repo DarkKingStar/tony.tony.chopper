@@ -1,30 +1,4 @@
 # Node.js
 node_modules/
-npm-debug.log
-
-# Logs
-logs
-*.log
-npm-debug.log*
-
-# Optional ESLint cache
-.eslintcache
-
-# Dependency directories
-jspm_packages/
-typings/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn
-.yarn-integrity
-
 # dotenv environment variables file
 .env
