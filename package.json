@@ -4,7 +4,7 @@
   "description": "backend server for Anime Streaming, Discovery API made with Express. Uses data from Gogoanime",
   "main": "main.js",
   "engines": {
-    "node": "18.x"
+    "node": "19.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
