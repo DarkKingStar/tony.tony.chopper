@@ -66,19 +66,6 @@ app.get('/watch', async (req, res) => {
 app.get('/server', async (req, res) => {
     handleRoute(req, res, Api.V_Servers); // Call handleRoute with V_Servers API function
 });
-//random anime character image route
-app.get("/character", async(req,res)=>{
-    try {
-        const data = await Api.CharacterImage();
-        res.status(200).json(data);
-    } catch (err) {
-        res.status(500).json({
-            status: 500,
-            error: 'Internal Error',
-            message: err,
-        });
-    }
-});
 
 
 

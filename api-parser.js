@@ -1,6 +1,5 @@
 const axios = require('axios');
 const url = "https://api.consumet.org/anime/gogoanime";
-const randomChar = require('anime-character-random');
 
 // Function to make a generic request to the API
 const makeRequest = async (endpoint, params = {}) => {
@@ -33,15 +32,6 @@ const Watch = async (episodeId) => makeRequest(`watch/${episodeId}`);
 // Function to get video servers for an episode
 const V_Servers = async (episodeId) => makeRequest(`servers/${episodeId}`);
 
-//Funtion to get random character images
-const CharacterImage = async () => {
-    try{
-        const chardata = await randomChar.GetChar();
-        return chardata;
-    }catch{
-        console.log("can't fetch data: anime");
-    }
-}
 
 module.exports = {
     Home,           // Homepage
@@ -50,6 +40,5 @@ module.exports = {
     Search,         // Search
     Anime_Info,     // Anime Information
     Watch,          // Watch Episode
-    V_Servers,       // Video Servers
-    CharacterImage
+    V_Servers       // Video Servers
 };
