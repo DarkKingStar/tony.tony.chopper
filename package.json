@@ -4,16 +4,17 @@
   "description": "backend server for Anime Streaming, Discovery API made with Express. Uses data from Gogoanime",
   "main": "main.js",
   "engines": {
-    "node": "19.x"
+    "node": "18.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "forever main.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "DarkinStar",
   "license": "ISC",
   "dependencies": {
+    "anime-character-random": "^1.0.14",
     "axios": "^1.5.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
