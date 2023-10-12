@@ -1,4 +1,6 @@
 const axios = require('axios');
+// const { v4 } = require("uuid");
+
 const url = "https://api.consumet.org/anime/gogoanime";
 
 // Function to make a generic request to the API
@@ -33,6 +35,7 @@ const Watch = async (episodeId) => makeRequest(`watch/${episodeId}`);
 const V_Servers = async (episodeId) => makeRequest(`servers/${episodeId}`);
 
 
+
 module.exports = {
     Home,           // Homepage
     Recent_Release, // Recent Releases
@@ -40,5 +43,6 @@ module.exports = {
     Search,         // Search
     Anime_Info,     // Anime Information
     Watch,          // Watch Episode
-    V_Servers       // Video Servers
+    V_Servers,      // Video Servers
+    //Get_Genres      // genres list 
 };

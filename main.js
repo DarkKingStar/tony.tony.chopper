@@ -1,6 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const Api = require('./api-parser');
+const cheerio = require("cheerio");
+const rs = require("request");
+
+const baseURL = "https://gogoanimehd.io";
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -66,6 +71,82 @@ app.get('/watch', async (req, res) => {
 app.get('/server', async (req, res) => {
     handleRoute(req, res, Api.V_Servers); // Call handleRoute with V_Servers API function
 });
+
+app.get("/genrelist", (req, res) => {
+    var list = [];
+  
+    let url = baseURL;
+    rs(url, (err, resp, html) => {
+      if (!err) {
+        try {
+          var $ = cheerio.load(html);
+          $("nav.genre")
+            .children("ul")
+            .children("li")
+            .each(function (index, element) {
+              list[index] = $(this).text();
+            });
+  
+          res.status(200).json({ list });
+        } catch (e) {
+          res.status(404).json({ e: "404 Error" });
+        }
+      }
+    });
+  });
+  app.get("/genre/:type", (req, res) => {
+    var results = [];
+    var type = req.params.type;
+    var page = req.query.q || 1; 
+    if (isNaN(page)) {
+      return res.status(404).json({ results });
+    }
+    url = `${baseURL}/genre/${type}?page=${page}`;
+    rs(url, (err, resp, html) => {
+      if (!err) {
+        try {
+          var $ = cheerio.load(html);
+          $(".img").each(function (index, element) {
+            let title = $(this).children("a").attr().title;
+            let id = $(this).children("a").attr().href.slice(10);
+            let image = $(this).children("a").children("img").attr().src;
+            let href = "/info/"+id
+            results[index] = { title, id, image, href };
+          });
+  
+          res.status(200).json({ results });
+        } catch (e) {
+          res.status(404).json({ e: "404 Error" });
+        }
+      }
+    });
+  });
+  app.get("/popular", (req, res) => {
+    var results = [];
+    var page = req.query.q || 1; 
+    if (isNaN(page)) {
+      return res.status(404).json({ results });
+    }
+    url = `${baseURL}/popular.html?page=${page}`;
+    rs(url, (err, resp, html) => {
+      if (!err) {
+        try {
+          var $ = cheerio.load(html);
+          $(".img").each(function (index, element) {
+            let title = $(this).children("a").attr().title;
+            let id = $(this).children("a").attr().href.slice(10);
+            let image = $(this).children("a").children("img").attr().src;
+            let href = "/info/"+id
+            results[index] = { title, id, image, href };
+          });
+  
+          res.status(200).json({ results });
+        } catch (e) {
+          res.status(404).json({ e: "404 Error" });
+        }
+      }
+    });
+  });
 
 
 
