@@ -89,7 +89,7 @@ app.get("/genrelist", (req, res) => {
   
           res.status(200).json({ list });
         } catch (e) {
-          res.status(404).json({ e: "404 Error" });
+          res.status(404).json({ e: "504 Error" });
         }
       }
     });
@@ -116,11 +116,12 @@ app.get("/genrelist", (req, res) => {
   
           res.status(200).json({ results });
         } catch (e) {
-          res.status(404).json({ e: "404 Error" });
+          res.status(404).json({ e: "504 Error" });
         }
       }
     });
   });
+  
   app.get("/popular", (req, res) => {
     var results = [];
     var page = req.query.q || 1; 
@@ -142,12 +143,37 @@ app.get("/genrelist", (req, res) => {
   
           res.status(200).json({ results });
         } catch (e) {
-          res.status(404).json({ e: "404 Error" });
+          res.status(404).json({ e: "504 Error" });
         }
       }
     });
   });
-
+  app.get("/animemovies", (req, res) => {
+    var results = [];
+    var page = req.query.q || 1; 
+    if (isNaN(page)) {
+      return res.status(404).json({ results });
+    }
+    url = `${baseURL}/anime-movies.html?page=${page}`;
+    rs(url, (err, resp, html) => {
+      if (!err) {
+        try {
+          var $ = cheerio.load(html);
+          $(".img").each(function (index, element) {
+            let title = $(this).children("a").attr().title;
+            let id = $(this).children("a").attr().href.slice(10);
+            let image = $(this).children("a").children("img").attr().src;
+            let href = "/info/"+id
+            results[index] = { title, id, image, href };
+          });
+  
+          res.status(200).json({ results });
+        } catch (e) {
+          res.status(404).json({ e: "504 Error" });
+        }
+      }
+    });
+  });
 
 
 app.listen(PORT, () => {
