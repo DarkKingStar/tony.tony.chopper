@@ -44,7 +44,30 @@ app.get('/', async (req, res) => {
 
 // Recent release route
 app.get('/recent-release', async (req, res) => {
-    handleRoute(req, res, Api.Recent_Release); // Call handleRoute with Recent_Release API function
+    var results = [];
+    var page = req.query.q || 1; 
+    if (isNaN(page)) {
+      return res.status(404).json({ results });
+    }
+    url = `${baseURL}?page=${page}`;
+    rs(url, (err, resp, html) => {
+      if (!err) {
+        try {
+          var $ = cheerio.load(html);
+          $(".img").each(function (index, element) {
+            let title = $(this).children("a").attr().title;
+            let id = $(this).children("a").attr().href.slice(10);
+            let image = $(this).children("a").children("img").attr().src;
+            let href = "/info?q="+id
+            results[index] = { title, id, image, href };
+          });
+  
+          res.status(200).json({ results });
+        } catch (e) {
+          res.status(404).json({ e: "504 Error" });
+        }
+      }
+    });
 });
 
 // Top airing route
@@ -59,7 +82,66 @@ app.get('/anime', async (req, res) => {
 
 // Anime info route
 app.get('/info', async (req, res) => {
-    handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
+    //handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
+    let results = [];
+    var animeid = req.query.q || ""; 
+    if (animeid == "") {
+      return res.status(404).json({ results });
+    }
+    siteUrl = `${baseURL}/category/${animeid}`;
+    rs(siteUrl, (err, resp, html) => {
+      if (!err) {
+        try {
+          var $ = cheerio.load(html);
+          var type = " ";
+          var summary = "";
+          var relased = "";
+          var status = "";
+          var genres = "";
+          var othername = "";
+          var title = $(".anime_info_body_bg").children("h1").text();
+          var image = $(".anime_info_body_bg").children("img").attr().src;
+  
+          $("p.type").each(function (index, element) {
+            if ("Type: " == $(this).children("span").text()) {
+              type = $(this).text().slice(15, -5);
+            } else if ("Plot Summary: " == $(this).children("span").text()) {
+              summary = $(this).text().slice(14);
+            } else if ("Released: " == $(this).children("span").text()) {
+              relased = $(this).text().slice(10);
+            } else if ("Status: " == $(this).children("span").text()) {
+              status = $(this).text().slice(8).trim();
+            } else if ("Genre: " == $(this).children("span").text()) {
+              genres = $(this).text().slice(20, -4);
+              genres = genres.split(",");
+              genres = genres.join(",");
+            } else if("Other name: " == $(this).children("span").text()){
+                othername = $(this).text().slice(12);
+            }
+            });
+          genres.replace(" ");
+          var totalepisode = $("#episode_page")
+            .children("li")
+            .last()
+            .children("a")
+            .attr().ep_end;
+          results[0] = {
+            title,
+            image,
+            type,
+            summary,
+            relased,
+            genres,
+            status,
+            totalepisode,
+            othername,
+          };
+          res.status(200).json({ results });
+        } catch (e) {
+          res.status(404).json({ e: "502 Error" });
+        }
+      }
+    });
 });
 
 // Watch route
@@ -110,7 +192,7 @@ app.get("/genrelist", (req, res) => {
             let title = $(this).children("a").attr().title;
             let id = $(this).children("a").attr().href.slice(10);
             let image = $(this).children("a").children("img").attr().src;
-            let href = "/info/"+id
+            let href = "/info?q="+id
             results[index] = { title, id, image, href };
           });
   
@@ -137,7 +219,7 @@ app.get("/genrelist", (req, res) => {
             let title = $(this).children("a").attr().title;
             let id = $(this).children("a").attr().href.slice(10);
             let image = $(this).children("a").children("img").attr().src;
-            let href = "/info/"+id
+            let href = "/info?q="+id
             results[index] = { title, id, image, href };
           });
   
@@ -163,7 +245,7 @@ app.get("/genrelist", (req, res) => {
             let title = $(this).children("a").attr().title;
             let id = $(this).children("a").attr().href.slice(10);
             let image = $(this).children("a").children("img").attr().src;
-            let href = "/info/"+id
+            let href = "/info?q="+id
             results[index] = { title, id, image, href };
           });
   
