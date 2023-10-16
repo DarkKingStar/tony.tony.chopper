@@ -171,7 +171,7 @@ app.get("/genrelist", (req, res) => {
   
           res.status(200).json({ list });
         } catch (e) {
-          res.status(404).json({ e: "504 Error" });
+          res.status(404).json({ e: "404 Error" });
         }
       }
     });
@@ -198,12 +198,11 @@ app.get("/genrelist", (req, res) => {
   
           res.status(200).json({ results });
         } catch (e) {
-          res.status(404).json({ e: "504 Error" });
+          res.status(404).json({ e: "404 Error" });
         }
       }
     });
   });
-  
   app.get("/popular", (req, res) => {
     var results = [];
     var page = req.query.q || 1; 
@@ -245,7 +244,7 @@ app.get("/genrelist", (req, res) => {
             let title = $(this).children("a").attr().title;
             let id = $(this).children("a").attr().href.slice(10);
             let image = $(this).children("a").children("img").attr().src;
-            let href = "/info?q="+id
+            let href = "/info/"+id
             results[index] = { title, id, image, href };
           });
   
@@ -256,6 +255,7 @@ app.get("/genrelist", (req, res) => {
       }
     });
   });
+
 
 
 app.listen(PORT, () => {
