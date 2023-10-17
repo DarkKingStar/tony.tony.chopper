@@ -1,4 +1,5 @@
-const fastify = require('fastify');
+const express = require('express');
+const cors = require('cors');
 const cheerio = require("cheerio");
 const rs = require("request");
 const { ANIME } = require('@consumet/extensions');
@@ -8,23 +9,19 @@ const gogoanime = new ANIME.Gogoanime();
 
 const PORT = process.env.PORT || 3000;
 
-const app = fastify();
-
-app.register(require('@fastify/cors'), (instance) => {
-  return (req, callback) => {
-    const corsOptions = {
-      origin: true, // Allow requests from any origin
-      credentials: true, // Allow credentials like cookies
-      optionSuccessStatus: 200,
-      port:PORT
-    };
-    callback(null, corsOptions)
-  }
-})
 
 
+const corsOptions = {
+  origin: '*', // Allow requests from any origin
+  credentails: true, // Allow credentials like cookies
+  optionSuccessStatus: 200,
+  port: PORT, // Set the port for CORS
+};
 
-app.register(require('@fastify/sensible'));
+const app = express();
+app.use(cors(corsOptions)); // Enable CORS
+app.use(express.json());
+
 
 // Define routes
 
@@ -43,9 +40,9 @@ app.get('/', async (req, res) => {
       { path: '/genrelist', description: 'Get a list of anime genres' },
       { path: '/genre/:type', description: 'Get anime by genre' }
     ];
-    res.send({ Message: "Welcome to Tony Tony Chopper Server 🎉", routes });
+    res.json({ Message: "Welcome to Tony Tony Chopper Server 🎉", routes });
   } else {
-    res.status(502).send({ Message: "Gogoanime Server Offline | Not Responding" });
+    res.status(502).json({ Message: "Gogoanime Server Offline | Not Responding" });
   }
 });
 
@@ -54,12 +51,12 @@ app.get('/recent-release', async (request, reply) => {
   const page = request.query.q;
   try{
     const res = await gogoanime.fetchRecentEpisodes(page)
-    .catch((err) => reply.status(404).send({ message: err }));
-    reply.status(200).send(res);
+    .catch((err) => reply.status(404).json({ message: err }));
+    reply.status(200).json(res);
   } catch (err) {
     reply
       .status(500)
-      .send({ message: 'Something went wrong. Please try again later.' });
+      .json({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -68,12 +65,12 @@ app.get('/top-airing', async (request, reply) => {
   const page = request.query.q;
   try{
     const res = await gogoanime.fetchTopAiring(page)
-    .catch((err) => reply.status(404).send({ message: err }));
-    reply.status(200).send(res);
+    .catch((err) => reply.status(404).json({ message: err }));
+    reply.status(200).json(res);
   } catch (err) {
     reply
       .status(500)
-      .send({ message: 'Something went wrong. Please try again later.' });
+      .json({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -82,12 +79,12 @@ app.get('/anime', async (request, reply) => {
   const query = request.query.q;
   try{
     const res = await gogoanime.search(query)
-    .catch((err) => reply.status(404).send({ message: err }));
-    reply.status(200).send(res);
+    .catch((err) => reply.status(404).json({ message: err }));
+    reply.status(200).json(res);
   } catch (err) {
     reply
       .status(500)
-      .send({ message: 'Something went wrong. Please try again later.' });
+      .json({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -96,12 +93,12 @@ app.get('/info', async (request, reply) => {
     const animeId = request.query.q;
     try{
       const res = await gogoanime.fetchAnimeInfo(animeId)
-      .catch((err) => reply.status(404).send({ message: err }));
-      reply.status(200).send(res);
+      .catch((err) => reply.status(404).json({ message: err }));
+      reply.status(200).json(res);
     } catch (err) {
       reply
         .status(500)
-        .send({ message: 'Something went wrong. Please try again later.' });
+        .json({ message: 'Something went wrong. Please try again later.' });
     }
 });
 
@@ -112,13 +109,13 @@ app.get('/watch', async (request, reply) => {
   try {
     const res = await gogoanime
       .fetchEpisodeSources(episodeId, server)
-      .catch((err) => reply.status(404).send({ message: err }));
+      .catch((err) => reply.status(404).json({ message: err }));
 
-    reply.status(200).send(res);
+    reply.status(200).json(res);
   } catch (err) {
     reply
       .status(500)
-      .send({ message: 'Something went wrong. Please try again later.' });
+      .json({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -128,13 +125,13 @@ app.get('/server', async (request, reply) => {
   try {
     const res = await gogoanime
       .fetchEpisodeServers(episodeId)
-      .catch((err) => reply.status(404).send({ message: err }));
+      .catch((err) => reply.status(404).json({ message: err }));
 
-    reply.status(200).send(res);
+    reply.status(200).json(res);
   } catch (err) {
     reply
       .status(500)
-      .send({ message: 'Something went wrong. Please try again later.' });
+      .json({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -153,9 +150,9 @@ app.get("/genrelist", (request, reply) => {
               list[index] = $(this).text();
             });
   
-          reply.status(200).send({ list });
+          reply.status(200).json({ list });
         } catch (e) {
-          reply.status(404).send({ e: "404 Error" });
+          reply.status(404).json({ e: "404 Error" });
         }
       }
     });
@@ -165,7 +162,7 @@ app.get("/genrelist", (request, reply) => {
     var type = request.params.type;
     var page = request.query.q || 1; 
     if (isNaN(page)) {
-      return res.status(404).send({ results });
+      return res.status(404).json({ results });
     }
     url = `${baseURL}/genre/${type}?page=${page}`;
     rs(url, (err, resp, html) => {
@@ -180,9 +177,9 @@ app.get("/genrelist", (request, reply) => {
             results[index] = { title, id, image, href };
           });
   
-          reply.status(200).send({ results });
+          reply.status(200).json({ results });
         } catch (e) {
-          reply.status(404).send({ e: "404 Error" });
+          reply.status(404).json({ e: "404 Error" });
         }
       }
     });
@@ -191,7 +188,7 @@ app.get("/genrelist", (request, reply) => {
     var results = [];
     var page = request.query.q || 1; 
     if (isNaN(page)) {
-      return reply.status(404).send({ results }); // Change 'res' to 'reply'
+      return reply.status(404).json({ results }); // Change 'res' to 'reply'
     }
     url = `${baseURL}/popular.html?page=${page}`;
     rs(url, (err, resp, html) => {
@@ -206,12 +203,12 @@ app.get("/genrelist", (request, reply) => {
             results[index] = { title, id, image, href };
           });
   
-          reply.status(200).send({ results });
+          reply.status(200).json({ results });
         } catch (e) {
-          reply.status(504).send({ e: "504 Error" });
+          reply.status(504).json({ e: "504 Error" });
         }
       } else {
-        reply.status(504).send({ e: "504 Error" }); // Add this block for handling request errors
+        reply.status(504).json({ e: "504 Error" }); // Add this block for handling request errors
       }
     });
   });
@@ -220,7 +217,7 @@ app.get("/genrelist", (request, reply) => {
     var results = [];
     var page = request.query.q || 1; 
     if (isNaN(page)) {
-      return res.status(404).send({ results });
+      return res.status(404).json({ results });
     }
     url = `${baseURL}/anime-movies.html?page=${page}`;
     rs(url, (err, resp, html) => {
@@ -235,22 +232,15 @@ app.get("/genrelist", (request, reply) => {
             results[index] = { title, id, image, href };
           });
   
-          reply.status(200).send({ results });
+          reply.status(200).json({ results });
         } catch (e) {
-          reply.status(404).send({ e: "504 Error" });
+          reply.status(404).json({ e: "504 Error" });
         }
       }
     });
   });
 
 
-  app.listen({
-    port: PORT,
-    host: '0.0.0.0'
-  }, (err) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
+  app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
-  });
+});
