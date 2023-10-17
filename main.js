@@ -3,9 +3,10 @@ const cors = require('cors');
 const Api = require('./api-parser');
 const cheerio = require("cheerio");
 const rs = require("request");
+const { ANIME } = require('@consumet/extensions');
 
 const baseURL = "https://gogoanimehd.io";
-
+const gogoanime = new ANIME.Gogoanime();
 
 const PORT = process.env.PORT || 3000;
 
@@ -63,9 +64,22 @@ app.get('/info', async (req, res) => {
 });
 
 // Watch route
-app.get('/watch', async (req, res) => {
-    handleRoute(req, res, Api.Watch); // Call handleRoute with Watch API function
-});
+app.get('/watch', async (request, reply) => {
+  const episodeId = request.query.e;
+  const server = request.query.q.toLowerCase();
+  try {
+    const res = await gogoanime
+      .fetchEpisodeSources(episodeId, server)
+      .catch((err) => reply.status(404).send({ message: err }));
+
+    reply.status(200).send(res);
+  } catch (err) {
+    reply
+      .status(500)
+      .send({ message: 'Something went wrong. Please try again later.' });
+  }
+}
+);
 
 // Server route
 app.get('/server', async (req, res) => {
