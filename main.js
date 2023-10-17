@@ -13,7 +13,8 @@ const app = fastify();
 app.register(require('@fastify/cors'), {
   origin: '*', // Allow requests from any origin
   credentials: true, // Allow credentials like cookies
-  optionSuccessStatus: 200
+  optionSuccessStatus: 200,
+  port:PORT
 });
 
 
