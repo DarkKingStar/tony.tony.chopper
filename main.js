@@ -146,9 +146,9 @@ app.get("/genrelist", (request, reply) => {
               list[index] = $(this).text();
             });
   
-          reply.status(200).json({ list });
+          reply.status(200).send({ list });
         } catch (e) {
-          reply.status(404).json({ e: "404 Error" });
+          reply.status(404).send({ e: "404 Error" });
         }
       }
     });
@@ -158,7 +158,7 @@ app.get("/genrelist", (request, reply) => {
     var type = req.params.type;
     var page = req.query.q || 1; 
     if (isNaN(page)) {
-      return res.status(404).json({ results });
+      return res.status(404).send({ results });
     }
     url = `${baseURL}/genre/${type}?page=${page}`;
     rs(url, (err, resp, html) => {
@@ -173,18 +173,18 @@ app.get("/genrelist", (request, reply) => {
             results[index] = { title, id, image, href };
           });
   
-          reply.status(200).json({ results });
+          reply.status(200).send({ results });
         } catch (e) {
-          reply.status(404).json({ e: "404 Error" });
+          reply.status(404).send({ e: "404 Error" });
         }
       }
     });
   });
   app.get("/popular", (request, reply) => {
     var results = [];
-    var page = req.query.q || 1; 
+    var page = request.query.q || 1; 
     if (isNaN(page)) {
-      return res.status(404).json({ results });
+      return reply.status(404).send({ results }); // Change 'res' to 'reply'
     }
     url = `${baseURL}/popular.html?page=${page}`;
     rs(url, (err, resp, html) => {
@@ -199,18 +199,21 @@ app.get("/genrelist", (request, reply) => {
             results[index] = { title, id, image, href };
           });
   
-          reply.status(200).json({ results });
+          reply.status(200).send({ results });
         } catch (e) {
-          reply.status(404).json({ e: "504 Error" });
+          reply.status(504).send({ e: "504 Error" });
         }
+      } else {
+        reply.status(504).send({ e: "504 Error" }); // Add this block for handling request errors
       }
     });
   });
+  
   app.get("/animemovies", (request, reply) => {
     var results = [];
     var page = req.query.q || 1; 
     if (isNaN(page)) {
-      return res.status(404).json({ results });
+      return res.status(404).send({ results });
     }
     url = `${baseURL}/anime-movies.html?page=${page}`;
     rs(url, (err, resp, html) => {
@@ -225,9 +228,9 @@ app.get("/genrelist", (request, reply) => {
             results[index] = { title, id, image, href };
           });
   
-          reply.status(200).json({ results });
+          reply.status(200).send({ results });
         } catch (e) {
-          reply.status(404).json({ e: "504 Error" });
+          reply.status(404).send({ e: "504 Error" });
         }
       }
     });
