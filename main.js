@@ -10,12 +10,18 @@ const PORT = process.env.PORT || 3000;
 
 const app = fastify();
 
-app.register(require('@fastify/cors'), {
-  origin: true, // Allow requests from any origin
-  credentials: true, // Allow credentials like cookies
-  optionSuccessStatus: 200,
-  port:PORT
-});
+app.register(require('@fastify/cors'), (instance) => {
+  return (req, callback) => {
+    const corsOptions = {
+      origin: true, // Allow requests from any origin
+      credentials: true, // Allow credentials like cookies
+      optionSuccessStatus: 200,
+      port:PORT
+    };
+    callback(null, corsOptions)
+  }
+})
+
 
 
 app.register(require('@fastify/sensible'));
