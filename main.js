@@ -66,7 +66,7 @@ app.get('/info', async (req, res) => {
 // Watch route
 app.get('/watch', async (request, reply) => {
   const episodeId = request.query.e;
-  const server = request.query.q.toLowerCase();
+  const server = request.query.q;
   try {
     const res = await gogoanime
       .fetchEpisodeSources(episodeId, server)
