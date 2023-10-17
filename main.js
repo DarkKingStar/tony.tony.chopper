@@ -155,8 +155,8 @@ app.get("/genrelist", (request, reply) => {
   });
   app.get("/genre/:type", (request, reply) => {
     var results = [];
-    var type = req.params.type;
-    var page = req.query.q || 1; 
+    var type = request.params.type;
+    var page = request.query.q || 1; 
     if (isNaN(page)) {
       return res.status(404).send({ results });
     }
@@ -211,7 +211,7 @@ app.get("/genrelist", (request, reply) => {
   
   app.get("/animemovies", (request, reply) => {
     var results = [];
-    var page = req.query.q || 1; 
+    var page = request.query.q || 1; 
     if (isNaN(page)) {
       return res.status(404).send({ results });
     }
