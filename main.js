@@ -131,7 +131,7 @@ app.get('/server', async (request, reply) => {
   }
 });
 
-app.get("/genrelist", (req, res) => {
+app.get("/genrelist", (request, reply) => {
     var list = [];
   
     let url = baseURL;
@@ -146,14 +146,14 @@ app.get("/genrelist", (req, res) => {
               list[index] = $(this).text();
             });
   
-          res.status(200).json({ list });
+          reply.status(200).json({ list });
         } catch (e) {
-          res.status(404).json({ e: "404 Error" });
+          reply.status(404).json({ e: "404 Error" });
         }
       }
     });
   });
-  app.get("/genre/:type", (req, res) => {
+  app.get("/genre/:type", (request, reply) => {
     var results = [];
     var type = req.params.type;
     var page = req.query.q || 1; 
@@ -173,14 +173,14 @@ app.get("/genrelist", (req, res) => {
             results[index] = { title, id, image, href };
           });
   
-          res.status(200).json({ results });
+          reply.status(200).json({ results });
         } catch (e) {
-          res.status(404).json({ e: "404 Error" });
+          reply.status(404).json({ e: "404 Error" });
         }
       }
     });
   });
-  app.get("/popular", (req, res) => {
+  app.get("/popular", (request, reply) => {
     var results = [];
     var page = req.query.q || 1; 
     if (isNaN(page)) {
@@ -199,14 +199,14 @@ app.get("/genrelist", (req, res) => {
             results[index] = { title, id, image, href };
           });
   
-          res.status(200).json({ results });
+          reply.status(200).json({ results });
         } catch (e) {
-          res.status(404).json({ e: "504 Error" });
+          reply.status(404).json({ e: "504 Error" });
         }
       }
     });
   });
-  app.get("/animemovies", (req, res) => {
+  app.get("/animemovies", (request, reply) => {
     var results = [];
     var page = req.query.q || 1; 
     if (isNaN(page)) {
@@ -225,9 +225,9 @@ app.get("/genrelist", (req, res) => {
             results[index] = { title, id, image, href };
           });
   
-          res.status(200).json({ results });
+          reply.status(200).json({ results });
         } catch (e) {
-          res.status(404).json({ e: "504 Error" });
+          reply.status(404).json({ e: "504 Error" });
         }
       }
     });
