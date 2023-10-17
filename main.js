@@ -1,6 +1,4 @@
-const express = require('express');
-const cors = require('cors');
-const Api = require('./api-parser');
+const fastify = require('fastify');
 const cheerio = require("cheerio");
 const rs = require("request");
 const { ANIME } = require('@consumet/extensions');
@@ -10,57 +8,94 @@ const gogoanime = new ANIME.Gogoanime();
 
 const PORT = process.env.PORT || 3000;
 
-const corsOptions = {
-    origin: '*', // Allow requests from any origin
-    credentails: true, // Allow credentials like cookies
-    optionSuccessStatus: 200,
-    port: PORT, // Set the port for CORS
-};
+const app = fastify();
 
-const app = express();
+app.register(require('@fastify/cors'), {
+  origin: '*', // Allow requests from any origin
+  credentials: true, // Allow credentials like cookies
+  optionSuccessStatus: 200
+});
 
-app.use(cors(corsOptions)); // Enable CORS
-app.use(express.json()); // Enable JSON parsing
 
-// Function to handle routes and return JSON data
-const handleRoute = async (req, res, apiFunction) => {
-    try {
-        const data = await apiFunction(req.query.q || 1); // Use 'q' as a default query parameter
-        res.status(200).json(data); // Send JSON response with data
-    } catch (err) {
-        res.status(500).json({
-            status: 500,
-            error: 'Internal Error',
-            message: err,
-        });
-    }
-};
+app.register(require('@fastify/sensible'));
 
 // Define routes
 
 // Home route
 app.get('/', async (req, res) => {
-    handleRoute(req, res, Api.Home); // Call handleRoute with Home API function
+  if(gogoanime.isWorking){
+    const routes = [
+      { path: '/anime?q={query}', description: 'Search for anime' },
+      { path: '/popular?q={page}', description: 'Get popular anime' },
+      { path: '/animemovies?q={page}', description: 'Get anime movies' },
+      { path: '/recent-release?q={page}', description: 'Get recent anime releases' },
+      { path: '/top-airing?q={page}', description: 'Get top airing anime' },
+      { path: '/info?q={animeId}', description: 'Get information about a specific anime' },
+      { path: '/watch?q={server}&e={episodeId}', description: 'Watch an episode of an anime' },
+      { path: '/server?q={episodeId}', description: 'Get servers for an episode' },
+      { path: '/genrelist', description: 'Get a list of anime genres' },
+      { path: '/genre/:type', description: 'Get anime by genre' }
+    ];
+    res.send({ Message: "Welcome to Tony Tony Chopper Server 🎉", routes });
+  } else {
+    res.status(502).send({ Message: "Gogoanime Server Offline | Not Responding" });
+  }
 });
 
 // Recent release route
-app.get('/recent-release', async (req, res) => {
-    handleRoute(req, res, Api.Recent_Release); // Call handleRoute with Recent_Release API function
+app.get('/recent-release', async (request, reply) => {
+  const page = request.query.q;
+  try{
+    const res = await gogoanime.fetchRecentEpisodes(page)
+    .catch((err) => reply.status(404).send({ message: err }));
+    reply.status(200).send(res);
+  } catch (err) {
+    reply
+      .status(500)
+      .send({ message: 'Something went wrong. Please try again later.' });
+  }
 });
 
 // Top airing route
-app.get('/top-airing', async (req, res) => {
-    handleRoute(req, res, Api.Top_Airing); // Call handleRoute with Top_Airing API function
+app.get('/top-airing', async (request, reply) => {
+  const page = request.query.q;
+  try{
+    const res = await gogoanime.fetchTopAiring(page)
+    .catch((err) => reply.status(404).send({ message: err }));
+    reply.status(200).send(res);
+  } catch (err) {
+    reply
+      .status(500)
+      .send({ message: 'Something went wrong. Please try again later.' });
+  }
 });
 
 // Anime search route
-app.get('/anime', async (req, res) => {
-    handleRoute(req, res, Api.Search); // Call handleRoute with Search API function
+app.get('/anime', async (request, reply) => {
+  const query = request.query.q;
+  try{
+    const res = await gogoanime.search(query)
+    .catch((err) => reply.status(404).send({ message: err }));
+    reply.status(200).send(res);
+  } catch (err) {
+    reply
+      .status(500)
+      .send({ message: 'Something went wrong. Please try again later.' });
+  }
 });
 
 // Anime info route
-app.get('/info', async (req, res) => {
-    handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
+app.get('/info', async (request, reply) => {
+    const animeId = request.query.q;
+    try{
+      const res = await gogoanime.fetchAnimeInfo(animeId)
+      .catch((err) => reply.status(404).send({ message: err }));
+      reply.status(200).send(res);
+    } catch (err) {
+      reply
+        .status(500)
+        .send({ message: 'Something went wrong. Please try again later.' });
+    }
 });
 
 // Watch route
@@ -78,12 +113,22 @@ app.get('/watch', async (request, reply) => {
       .status(500)
       .send({ message: 'Something went wrong. Please try again later.' });
   }
-}
-);
+});
 
 // Server route
-app.get('/server', async (req, res) => {
-    handleRoute(req, res, Api.V_Servers); // Call handleRoute with V_Servers API function
+app.get('/server', async (request, reply) => {
+  const episodeId = request.query.q;
+  try {
+    const res = await gogoanime
+      .fetchEpisodeServers(episodeId)
+      .catch((err) => reply.status(404).send({ message: err }));
+
+    reply.status(200).send(res);
+  } catch (err) {
+    reply
+      .status(500)
+      .send({ message: 'Something went wrong. Please try again later.' });
+  }
 });
 
 app.get("/genrelist", (req, res) => {
@@ -189,7 +234,13 @@ app.get("/genrelist", (req, res) => {
   });
 
 
-
-app.listen(PORT, () => {
+  app.listen({
+    port: PORT,
+    host: '0.0.0.0'
+  }, (err) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
     console.log(`Server is running on http://localhost:${PORT}`);
-});
+  });
