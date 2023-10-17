@@ -1,5 +1,4 @@
-const express = require('express');
-const cors = require('cors');
+const fastify = require('fastify');
 const cheerio = require("cheerio");
 const rs = require("request");
 const { ANIME } = require('@consumet/extensions');
@@ -9,19 +8,16 @@ const gogoanime = new ANIME.Gogoanime();
 
 const PORT = process.env.PORT || 3000;
 
+const app = fastify();
 
-
-const corsOptions = {
+app.register(require('@fastify/cors'), {
   origin: '*', // Allow requests from any origin
-  credentails: true, // Allow credentials like cookies
-  optionSuccessStatus: 200,
-  port: PORT, // Set the port for CORS
-};
+  credentials: true, // Allow credentials like cookies
+  optionSuccessStatus: 200
+});
 
-const app = express();
-app.use(cors(corsOptions)); // Enable CORS
-app.use(express.json());
 
+app.register(require('@fastify/sensible'));
 
 // Define routes
 
@@ -40,9 +36,9 @@ app.get('/', async (req, res) => {
       { path: '/genrelist', description: 'Get a list of anime genres' },
       { path: '/genre/:type', description: 'Get anime by genre' }
     ];
-    res.json({ Message: "Welcome to Tony Tony Chopper Server 🎉", routes });
+    res.send({ Message: "Welcome to Tony Tony Chopper Server 🎉", routes });
   } else {
-    res.status(502).json({ Message: "Gogoanime Server Offline | Not Responding" });
+    res.status(502).send({ Message: "Gogoanime Server Offline | Not Responding" });
   }
 });
 
@@ -51,12 +47,12 @@ app.get('/recent-release', async (request, reply) => {
   const page = request.query.q;
   try{
     const res = await gogoanime.fetchRecentEpisodes(page)
-    .catch((err) => reply.status(404).json({ message: err }));
-    reply.status(200).json(res);
+    .catch((err) => reply.status(404).send({ message: err }));
+    reply.status(200).send(res);
   } catch (err) {
     reply
       .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
+      .send({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -65,12 +61,12 @@ app.get('/top-airing', async (request, reply) => {
   const page = request.query.q;
   try{
     const res = await gogoanime.fetchTopAiring(page)
-    .catch((err) => reply.status(404).json({ message: err }));
-    reply.status(200).json(res);
+    .catch((err) => reply.status(404).send({ message: err }));
+    reply.status(200).send(res);
   } catch (err) {
     reply
       .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
+      .send({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -79,12 +75,12 @@ app.get('/anime', async (request, reply) => {
   const query = request.query.q;
   try{
     const res = await gogoanime.search(query)
-    .catch((err) => reply.status(404).json({ message: err }));
-    reply.status(200).json(res);
+    .catch((err) => reply.status(404).send({ message: err }));
+    reply.status(200).send(res);
   } catch (err) {
     reply
       .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
+      .send({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -93,12 +89,12 @@ app.get('/info', async (request, reply) => {
     const animeId = request.query.q;
     try{
       const res = await gogoanime.fetchAnimeInfo(animeId)
-      .catch((err) => reply.status(404).json({ message: err }));
-      reply.status(200).json(res);
+      .catch((err) => reply.status(404).send({ message: err }));
+      reply.status(200).send(res);
     } catch (err) {
       reply
         .status(500)
-        .json({ message: 'Something went wrong. Please try again later.' });
+        .send({ message: 'Something went wrong. Please try again later.' });
     }
 });
 
@@ -117,7 +113,8 @@ app.get('/watch', async (request, reply) => {
       .status(500)
       .json({ message: 'Something went wrong. Please try again later.' });
   }
-});
+}
+);
 
 // Server route
 app.get('/server', async (request, reply) => {
@@ -125,13 +122,13 @@ app.get('/server', async (request, reply) => {
   try {
     const res = await gogoanime
       .fetchEpisodeServers(episodeId)
-      .catch((err) => reply.status(404).json({ message: err }));
+      .catch((err) => reply.status(404).send({ message: err }));
 
-    reply.status(200).json(res);
+    reply.status(200).send(res);
   } catch (err) {
     reply
       .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
+      .send({ message: 'Something went wrong. Please try again later.' });
   }
 });
 
@@ -241,6 +238,13 @@ app.get("/genrelist", (request, reply) => {
   });
 
 
-  app.listen(PORT, () => {
+  app.listen({
+    port: PORT,
+    host: '0.0.0.0'
+  }, (err) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
     console.log(`Server is running on http://localhost:${PORT}`);
 });
