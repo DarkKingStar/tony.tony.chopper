@@ -15,8 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@consumet/extensions": "^1.5.2",
-    "@fastify/cors": "^7.0.0",
-    "@fastify/sensible": "^4.0.0",
+    "anime-character-random": "^1.0.14",
     "axios": "^1.5.1",
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
