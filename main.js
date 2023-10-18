@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const Api = require('./api-parser');
 const cheerio = require("cheerio");
 const rs = require("request");
 const { ANIME } = require('@consumet/extensions');
@@ -21,91 +22,45 @@ const app = express();
 app.use(cors(corsOptions)); // Enable CORS
 app.use(express.json()); // Enable JSON parsing
 
+// Function to handle routes and return JSON data
+const handleRoute = async (req, res, apiFunction) => {
+    try {
+        const data = await apiFunction(req.query.q || 1); // Use 'q' as a default query parameter
+        res.status(200).json(data); // Send JSON response with data
+    } catch (err) {
+        res.status(500).json({
+            status: 500,
+            error: 'Internal Error',
+            message: err,
+        });
+    }
+};
+
 // Define routes
 
 // Home route
 app.get('/', async (req, res) => {
-if(gogoanime.isWorking){
-  const routes = [
-    { path: '/anime?q={query}', description: 'Search for anime' },
-    { path: '/popular?q={page}', description: 'Get popular anime' },
-    { path: '/animemovies?q={page}', description: 'Get anime movies' },
-    { path: '/recent-release?q={page}', description: 'Get recent anime releases' },
-    { path: '/top-airing?q={page}', description: 'Get top airing anime' },
-    { path: '/info?q={animeId}', description: 'Get information about a specific anime' },
-    { path: '/watch?q={server}&e={episodeId}', description: 'Watch an episode of an anime' },
-    { path: '/server?q={episodeId}', description: 'Get servers for an episode' },
-    { path: '/genrelist', description: 'Get a list of anime genres' },
-    { path: '/genre/:type', description: 'Get anime by genre' }
-  ];
-  res.send({ Message: "Welcome to Tony Tony Chopper Server 🎉", routes });
-} else {
-  res.status(502).send({ Message: "Gogoanime Server Offline | Not Responding" });
-}
+    handleRoute(req, res, Api.Home); // Call handleRoute with Home API function
 });
 
 // Recent release route
-app.get('/recent-release', async (request, reply) => {
-  const page = request.query.q || 1;
-  try {
-    const res = await gogoanime
-      .fetchRecentEpisodes(page)
-      .catch((err) => reply.status(404).json({ message: err }));
-
-    reply.status(200).json(res);
-  } catch (err) {
-    reply
-      .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
-  }
+app.get('/recent-release', async (req, res) => {
+    handleRoute(req, res, Api.Recent_Release); // Call handleRoute with Recent_Release API function
 });
 
 // Top airing route
-app.get('/top-airing', async (request, reply) => {
-  const page = request.query.q|| 1;
-  try {
-    const res = await gogoanime
-      .fetchTopAiring(page)
-      .catch((err) => reply.status(404).json({ message: err }));
-
-    reply.status(200).json(res);
-  } catch (err) {
-    reply
-      .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
-  }
+app.get('/top-airing', async (req, res) => {
+    handleRoute(req, res, Api.Top_Airing); // Call handleRoute with Top_Airing API function
 });
 
 // Anime search route
-app.get('/anime', async (request, reply) => {
-  const searchItem = request.query.q;
-  try {
-    const res = await gogoanime
-      .search(searchItem)
-      .catch((err) => reply.status(404).json({ message: err }));
-
-    reply.status(200).json(res);
-  } catch (err) {
-    reply
-      .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
-  }
+app.get('/anime', async (req, res) => {
+    handleRoute(req, res, Api.Search); // Call handleRoute with Search API function
 });
 
 // Anime info route
-app.get('/info', async (request, reply) => {
-  const animeId = request.query.q;
-  try {
-    const res = await gogoanime
-      .fetchAnimeInfo(animeId)
-      .catch((err) => reply.status(404).json({ message: err }));
-
-    reply.status(200).json(res);
-  } catch (err) {
-    reply
-      .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
-  }
+app.get('/info', async (req, res) => {
+    handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
 });
 
 // Watch route
@@ -123,22 +78,12 @@ app.get('/watch', async (request, reply) => {
       .status(500)
       .json({ message: 'Something went wrong. Please try again later.' });
   }
-});
+}
+);
 
 // Server route
-app.get('/server', async (request, reply) => {
-  const episodeId = request.query.q;
-  try {
-    const res = await gogoanime
-      .fetchEpisodeServers(episodeId)
-      .catch((err) => reply.status(404).json({ message: err }));
-
-    reply.status(200).json(res);
-  } catch (err) {
-    reply
-      .status(500)
-      .json({ message: 'Something went wrong. Please try again later.' });
-  }
+app.get('/server', async (req, res) => {
+    handleRoute(req, res, Api.V_Servers); // Call handleRoute with V_Servers API function
 });
 
 app.get("/genrelist", (request, reply) => {
