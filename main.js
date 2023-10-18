@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
     origin: '*', // Allow requests from any origin
-    credentails: true, // Allow credentials like cookies
+    credentials: true, // Allow credentials like cookies
     optionSuccessStatus: 200,
     port: PORT, // Set the port for CORS
 };
