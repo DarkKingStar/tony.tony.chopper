@@ -8,7 +8,7 @@ const { ANIME } = require('@consumet/extensions');
 const baseURL = "https://gogoanimehd.io";
 const gogoanime = new ANIME.Gogoanime();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 
 const corsOptions = {
     origin: '*', // Allow requests from any origin
@@ -40,7 +40,8 @@ const handleRoute = async (req, res, apiFunction) => {
 
 // Home route
 app.get('/', async (req, res) => {
-    handleRoute(req, res, Api.Home); // Call handleRoute with Home API function
+    // handleRoute(req, res, Api.Home); // Call handleRoute with Home API function
+    res.status(200).json({message:'chopper backend server online!'})
 });
 
 // Recent release route
@@ -60,16 +61,22 @@ app.get('/anime', async (req, res) => {
 
 // Anime info route
 app.get('/info', async (request, reply) => {
-    //handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
     const animeId = request.query.id;
-    try{
+    if(animeId){
+      try {
       const res = await gogoanime
         .fetchAnimeInfo(animeId)
-        .catch((err) => reply.status(404).json({message: err}));
+        .catch((err) => reply.status(404).json({ message: err }));
+  
       reply.status(200).json(res);
-      }catch(err){
-        reply.status(500)
-        .json({ message: 'Something went wrong. please try again later.'});
+      } catch (err) {
+      reply
+        .status(500)
+        .json({ message: 'Something went wrong. Please try again later.' });
+      }
+    }
+    else{
+      reply.status(200).json({message: 'No id provided'});
     }
 });
 
