@@ -59,8 +59,18 @@ app.get('/anime', async (req, res) => {
 });
 
 // Anime info route
-app.get('/info', async (req, res) => {
-    handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
+app.get('/info', async (request, reply) => {
+    //handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
+    const animeId = request.query.id;
+    try{
+      const res = await gogoanime
+        .fetchAnimeInfo(animeId)
+        .catch((err) => reply.status(404).json({message: err}));
+      reply.status(200).json(res);
+      }catch(err){
+        reply.status(500)
+        .json({ message: 'Something went wrong. please try again later.'});
+    }
 });
 
 // Watch route
