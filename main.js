@@ -1,11 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const Api = require('./api-parser');
 const cheerio = require("cheerio");
 const rs = require("request");
 const { ANIME } = require('@consumet/extensions');
 
-const baseURL = "https://gogoanimehd.io";
+const baseURL = "https://anitaku.to/";
 const gogoanime = new ANIME.Gogoanime();
 
 const PORT = process.env.PORT || 3000;
@@ -22,45 +21,56 @@ const app = express();
 app.use(cors(corsOptions)); // Enable CORS
 app.use(express.json()); // Enable JSON parsing
 
-// Function to handle routes and return JSON data
-const handleRoute = async (req, res, apiFunction) => {
-    try {
-        const data = await apiFunction(req.query.q || 1); // Use 'q' as a default query parameter
-        res.status(200).json(data); // Send JSON response with data
-    } catch (err) {
-        res.status(500).json({
-            status: 500,
-            error: 'Internal Error',
-            message: err,
-        });
-    }
-};
-
 // Define routes
 
 // Home route
 app.get('/', async (req, res) => {
-    handleRoute(req, res, Api.Home); // Call handleRoute with Home API function
+  // handleRoute(req, res, Api.Home); // Call handleRoute with Home API function
+  try {
+    res.status(200).json({  	
+        intro:	"Welcome to the anitaku(gogoanime) provider: check out the provider's website @ https://anitaku.to/",
+        routes:	
+        [
+          "/anime?q='SearchText'",
+          "/info?i='id'",
+          "/watch?epid='episodeId'",
+          "/servers",
+          "/top-airing",
+          "/recent-release",
+          "/popular",
+          "/animemovies",
+          "/genrelist",
+          "/genre/:type",
+        ],
+        github: "All Infomation is provided in the github repo: https://github.com/DarkKingStar/tony.tony.chopper"
+    });
+      } catch (err) {
+          res.status(500).json({
+              status: 500,
+              error: 'Internal Error',
+              message: err,
+          });
+      }
 });
 
 // Recent release route
 app.get('/recent-release', async (req, res) => {
-    handleRoute(req, res, Api.Recent_Release); // Call handleRoute with Recent_Release API function
+    // handleRoute(req, res, Api.Recent_Release); // Call handleRoute with Recent_Release API function
 });
 
 // Top airing route
 app.get('/top-airing', async (req, res) => {
-    handleRoute(req, res, Api.Top_Airing); // Call handleRoute with Top_Airing API function
+    // handleRoute(req, res, Api.Top_Airing); // Call handleRoute with Top_Airing API function
 });
 
 // Anime search route
 app.get('/anime', async (req, res) => {
-    handleRoute(req, res, Api.Search); // Call handleRoute with Search API function
+    // handleRoute(req, res, Api.Search); // Call handleRoute with Search API function
 });
 
 // Anime info route
 app.get('/info', async (req, res) => {
-    handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
+    // handleRoute(req, res, Api.Anime_Info); // Call handleRoute with Anime_Info API function
 });
 
 // Watch route
@@ -89,7 +99,7 @@ app.get('/server', async (req, res) => {
 app.get("/genrelist", (request, reply) => {
     var list = [];
   
-    let url = baseURL;
+    let url = `${baseURL}/home.html`;
     rs(url, (err, resp, html) => {
       if (!err) {
         try {
