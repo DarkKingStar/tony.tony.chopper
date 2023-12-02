@@ -1,27 +1,36 @@
 {
-  "name": "anidark-backend",
+  "name": "server.tony.chopper",
   "version": "1.0.0",
-  "description": "backend server for Anime Streaming, Discovery API made with Express. Uses data from Gogoanime",
+  "description": "GogoAnime API to fetch anime and Streaming m3u8 files",
   "main": "main.js",
-  "engines": {
-    "node": "18.x"
-  },
   "scripts": {
-    "test": "node main.js",
-    "start": "forever main.js"
+    "test": "nodemon main.js",
+    "start": "node main.js"
   },
-  "keywords": [],
+  "keywords": [
+    "GogoAnime",
+    "API",
+    "Node",
+    "js",
+    "Anime",
+    "m3u8"
+  ],
+  "type": "module",
   "author": "DarkinStar",
   "license": "ISC",
   "dependencies": {
-    "@consumet/extensions": "^1.5.2",
-    "anime-character-random": "^1.0.14",
-    "axios": "^1.5.1",
+    "ascii-url-encoder": "^1.2.0",
+    "axios": "^1.6.2",
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "forever": "^0.14.2",
+    "form-data": "^4.0.0",
     "request": "^2.88.2",
     "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
