@@ -18,7 +18,7 @@ async function topAiring(page) {
                     var _a, _b;
                     topAiringData.push({
                         id: (_a = $(el).find('a:nth-child(1)').attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')[2],
-                        title: $(el).find('a:nth-child(1)').attr('title'),
+                        title: $(el).find('a:nth-child(1)').text().trim(),
                         image: (_b = $(el).find('a:nth-child(1) > div').attr('style')) === null || _b === void 0 ? void 0 : _b.match('(https?://.*.(?:png|jpg))')[0],
                         url: `${BASE_URL}${$(el).find('a:nth-child(1)').attr('href')}`,
                         genres: $(el)

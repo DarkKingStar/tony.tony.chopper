@@ -20,7 +20,7 @@ async function popularAnime(page){
                     popularAnimeData.push({
                         id: (_b = (_a = $(el).find('a').attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')[2]) === null || _b === void 0 ? void 0 : _b.split('-episode')[0],
                         released: $(el).find('p.released').text().replace('Released: ', '').replace('\n','').trim(),
-                        title: $(el).find('p.name > a').attr('title'),
+                        title: $(el).find('p.name > a').text().trim(),
                         image: $(el).find('div > a > img').attr('src'),
                         url: `${BASE_URL}${(_d = $(el).find('a').attr('href')) === null || _d === void 0 ? void 0 : _d.trim()}`,
                     });
