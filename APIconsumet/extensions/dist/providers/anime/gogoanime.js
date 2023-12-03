@@ -231,7 +231,7 @@ class Gogoanime extends models_1.AnimeParser {
          */
         this.fetchRecentEpisodes = async (page = 1, type = 1) => {
             try {
-                const res = await this.client.get(`${this.ajaxUrl}/page-recent-release.html?page=${page}&type=${type}`);
+                const res = await this.client.get(`${this.baseUrl}/home.html?page=${page}&type=${type}`);
                 const $ = (0, cheerio_1.load)(res.data);
                 const recentEpisodes = [];
                 $('div.last_episodes.loaddub > ul > li').each((i, el) => {
