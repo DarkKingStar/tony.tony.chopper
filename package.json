@@ -15,7 +15,6 @@
     "Anime",
     "m3u8"
   ],
-  "type": "module",
   "author": "DarkinStar",
   "license": "ISC",
   "dependencies": {

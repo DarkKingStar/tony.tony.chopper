@@ -1,28 +1,22 @@
-import express, {json} from "express";
-import cors from 'cors';
-import welcomeData from './welcome.js'
-import dotenv from 'dotenv';
+const express = require('express');
+const cors = require('cors');
+const welcomeData = require('./welcome.js');
 
-//fetcher import
-import { fetchAnimeMovies, fetchPopularAnime, fetchRecentReleased, fetchTopAiring } from "./Fetcher/fetchAnimeList.js";
-import handleFetchingListRoutes from "./Routes/handleFetchingListRoutes.js";
-import handleFetchingInfoRoutes from "./Routes/handleFetchingInfoRoutes.js";
+const { ANIME } = require('./APIconsumet/extensions');
+const gogoanime = new ANIME.Gogoanime();
 
 
-dotenv.config();
 const PORT = process.env.PORT || 3000;
-
 const corsOptions = {
-    origin: '*', // Allow requests from any origin
-    credentials: true, // Allow credentials like cookies
+    origin: '*',
+    credentials: true,
     optionSuccessStatus: 200,
-    port: PORT, // Set the port for CORS
+    port: PORT, 
 };
-
 const app = express();
 
 app.use(cors(corsOptions));
-app.use(json());
+app.use(express.json());
 
 app.get('/', async (req, res) => {
     try {
@@ -34,28 +28,73 @@ app.get('/', async (req, res) => {
             message: err,
         });
     }
-  });
-
-
-app.get('/recent-released', async (request,reply) =>{
-    handleFetchingListRoutes(request, reply, fetchRecentReleased);
-});
-app.get('/top-airing', async (request,reply) =>{
-    handleFetchingListRoutes(request, reply, fetchTopAiring);
-});
-app.get('/popular', async (request,reply) =>{
-    handleFetchingListRoutes(request, reply, fetchPopularAnime);
-});
-app.get('/animemovies', async (request,reply) =>{
-    handleFetchingListRoutes(request, reply, fetchAnimeMovies);
 });
 
+app.get('/recent-released', async(request,reply)=>{
+    functionWithQuery(gogoanime.fetchRecentEpisodes, request, reply);
+});
+
+app.get('/top-airing', async(request,reply)=>{
+    functionWithQuery(gogoanime.fetchTopAiring, request, reply);
+});
+
+app.get('/popular', async(request,reply)=>{
+    functionWithQuery(gogoanime.fetchPopularAnime, request, reply);   
+});
+
+app.get('/anime-movies', async(request,reply)=>{
+    functionWithQuery(gogoanime.fetchAnimeMovies, request, reply);
+});
+
+
+app.get('/genres', async(request,reply)=>{
+
+});
+app.get('/genre/:type', async(request,reply)=>{
+
+});
 
 app.get('/info/:animeId', async(request,reply)=>{
-    handleFetchingInfoRoutes(request, reply);
+    return functionWithParams(gogoanime.fetchAnimeInfo, request, reply);
+
 });
+
+app.get('/watch/:episodeId', async(request,reply)=>{
+    return functionWithParams(gogoanime.fetchEpisodeSources, request, reply);
+});
+app.get('/servers', async(request,reply)=>{
+});
+app.get('/search/:data', async(request,reply)=>{
+});
+
+async function functionWithParams(ParamsFunction, request, reply){
+    const id = request.params.episodeId || request.params.animeId || request.params.data || request.params.type || null;
+    if(id === null){
+        return reply.status(404).json({"error": "Invalid last params"})
+    }
+    try{
+        const jsonData = await ParamsFunction(id);
+        reply.status(200).json(jsonData);
+    }catch(err){
+        console.error("Error while fetching: ",err);
+    }
+}
+
+async function functionWithQuery(QueryFunction, request, reply){
+    const page = request.query.p || 1;
+    if(isNaN(page) || page == 0){
+        return reply.status(200).json({"error": "Invalid Page Number"})
+    }
+    try{
+        const jsonData = await QueryFunction(Number(page));
+        reply.status(200).json(jsonData);
+    }catch(err){
+        console.error("Error while fetching: ",err);
+    }
+}
 
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
