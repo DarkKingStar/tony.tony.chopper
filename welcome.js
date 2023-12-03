@@ -13,7 +13,7 @@ const welcomeData = {
               },
             'All genres of Anime List':"/genres",
             'Get Anime of the type genre':"/genre/:type",
-            'Get Streaming Servers':"/servers",
+            'Get Streaming Servers':"/servers/:episodeId",
           },
           "github": "All Infomation is provided in the github repo: https://github.com/DarkKingStar/tony.tony.chopper"
 };

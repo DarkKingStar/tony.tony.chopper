@@ -62,7 +62,8 @@ app.get('/info/:animeId', async(request,reply)=>{
 app.get('/watch/:episodeId', async(request,reply)=>{
     return functionWithParams(gogoanime.fetchEpisodeSources, request, reply);
 });
-app.get('/servers', async(request,reply)=>{
+app.get('/servers/:episodeId', async(request,reply)=>{
+    return functionWithParams(gogoanime.fetchEpisodeServers, request, reply);
 });
 app.get('/search/:data', async(request,reply)=>{
 });
