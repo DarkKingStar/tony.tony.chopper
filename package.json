@@ -1,5 +1,5 @@
 {
-  "name": "server.tony.chopper",
+  "name": "chopper.server",
   "version": "1.0.0",
   "description": "GogoAnime API to fetch anime and Streaming m3u8 files",
   "main": "main.js",
