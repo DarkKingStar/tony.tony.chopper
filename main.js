@@ -1,5 +1,5 @@
 const fastify = require('fastify')({ 
-    logger: true,
+    logger: false,
     keepAliveTimeout: 10000 
 });
 const cors = require('cors');
@@ -7,7 +7,8 @@ const welcomeData = require('./welcome.js');
 const { searchAnime, recentEpisodes, topAiring, popularAnime, animeMovies } = require('./src/animefetcher.js');
 const { animeInfo } = require("./src/detailsfetcher.js");
 const {episodeSources} = require("./src/streamfetcher.js");
-const {fetchWithParams, fetchWithQuery}= require("./utils/helpers.js")
+const {fetchWithParams, fetchWithQuery}= require("./utils/helpers.js");
+const { genreList, genreTypeAnimeList } = require('./src/genrefetcher.js');
 
 const PORT = process.env.PORT || 3000;
 
@@ -46,11 +47,11 @@ fastify.get('/anime-movies', async(request,reply)=>{
 });
 
 fastify.get('/genres', async(request,reply)=>{
-    reply.code(200).send({data:"not yet done"});
+    fetchWithQuery(genreList,request,reply);
 });
 
 fastify.get('/genre/:type', async(request,reply)=>{
-    reply.code(200).send({data:"not yet done"});
+    return fetchWithParams(genreTypeAnimeList, request, reply);
 });
 
 fastify.get('/info/:animeId', async(request,reply)=>{

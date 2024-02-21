@@ -1,6 +1,5 @@
 const cheerio = require('cheerio')
 const axios = require('axios');
-const { animeInfo } = require('./detailsfetcher');
 
 
 
@@ -27,7 +26,7 @@ const searchAnime = async(query, page=1) =>{
                 title: $(el).find('p.name > a').text().trim(),
                 url: `${baseUrl}/${$(el).find('p.name > a').attr('href')}`,
                 image: $(el).find('div > a > img').attr('src'),
-                releaseDate: $(el).find('p.released').text().trim(),
+                status: $(el).find('p.released').text().trim(),
                 subOrDub: $(el).find('p.name > a').text().toLowerCase().includes('dub')
                     ? 'dub'
                     : 'sub',
@@ -55,7 +54,7 @@ const recentEpisodes = async(type=1,page=1) =>{
                 image: $(el).find('div > a > img').attr('src'),
             });
         });
-        const hasNextPage = !$('div.anime_name_pagination.intro > div > ul > li').last().hasClass('selected');
+        const hasNextPage = $('div.anime_name_pagination.intro > div > ul > li.selected').next().length > 0;
         return {
             currentPage: page,
             hasNextPage: hasNextPage,
@@ -80,7 +79,7 @@ const topAiring = async (page = 1) => {
                 image: (_b = $(el).find('a:nth-child(1) > div').attr('style')) === null || _b === void 0 ? void 0 : _b.match('(https?://.*.(?:png|jpg))')[0],
             });
         });
-        const hasNextPage = !$('div.anime_name.comedy > div > div > ul > li').last().hasClass('selected');
+        const hasNextPage = $('div.anime_name.comedy > div > div > ul > li.selected').next().length > 0;
         return {
             currentPage: page,
             hasNextPage: hasNextPage,
@@ -107,7 +106,7 @@ const popularAnime = async (page = 1,type = 1) => {
                 image: $(el).find('div > a > img').attr('src'),
             });
         });
-        const hasNextPage = !$('div.anime_name_pagination > div > ul > li').last().hasClass('selected');
+        const hasNextPage = $('div.anime_name_pagination > div > ul > li.selected').next().length > 0;
         return {
             currentPage: page,
             hasNextPage: hasNextPage,
@@ -134,7 +133,7 @@ const animeMovies = async (page = 1,type = 1) => {
                 image: $(el).find('div > a > img').attr('src'),
             });
         });
-        const hasNextPage = !$('div.anime_name_pagination > div > ul > li').last().hasClass('selected');
+        const hasNextPage = $('div.anime_name_pagination > div > ul > li.selected').next().length > 0;
         return {
             currentPage: page,
             hasNextPage: hasNextPage,
