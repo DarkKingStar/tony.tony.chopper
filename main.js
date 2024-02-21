@@ -1,4 +1,4 @@
-const express = require('express');
+const fastify = require('fastify')({ logger: false });
 const cors = require('cors');
 const welcomeData = require('./welcome.js');
 const { searchAnime, recentEpisodes, topAiring, popularAnime, animeMovies } = require('./src/animefetcher.js');
@@ -6,24 +6,19 @@ const { animeInfo } = require("./src/detailsfetcher.js");
 const {episodeSources} = require("./src/streamfetcher.js");
 const {fetchWithParams, fetchWithQuery}= require("./utils/helpers.js")
 
-
 const PORT = process.env.PORT || 3000;
-const corsOptions = {
+
+fastify.register(require('@fastify/cors'), { 
     origin: '*',
     credentials: true,
     optionSuccessStatus: 200,
-    port: PORT, 
-};
-const app = express();
+})
 
-app.use(cors(corsOptions));
-app.use(express.json());
-
-app.get('/', async (req, res) => {
+fastify.get('/', async (request, reply) => {
     try {
-      res.status(200).json(welcomeData);  	
+        reply.code(200).send(welcomeData);
     } catch (err) {
-        res.status(500).json({
+        reply.code(500).send({
             status: 500,
             error: 'Internal Error',
             message: err,
@@ -31,48 +26,48 @@ app.get('/', async (req, res) => {
     }
 });
 
-app.get('/recent-released', async(request,reply)=>{
+fastify.get('/recent-released', async(request,reply)=>{
     fetchWithQuery(recentEpisodes, request, reply);
 });
 
-app.get('/top-airing', async(request,reply)=>{
+fastify.get('/top-airing', async(request,reply)=>{
     fetchWithQuery(topAiring, request, reply);
 });
 
-app.get('/popular', async(request,reply)=>{
+fastify.get('/popular', async(request,reply)=>{
     fetchWithQuery(popularAnime, request, reply);   
 });
 
-app.get('/anime-movies', async(request,reply)=>{
+fastify.get('/anime-movies', async(request,reply)=>{
     fetchWithQuery(animeMovies, request, reply);
 });
 
-
-app.get('/genres', async(request,reply)=>{
-    reply.status(200).json({data:"not yet done"});
-
-});
-app.get('/genre/:type', async(request,reply)=>{
-    reply.status(200).json({data:"not yet done"});
+fastify.get('/genres', async(request,reply)=>{
+    reply.code(200).send({data:"not yet done"});
 });
 
-app.get('/info/:animeId', async(request,reply)=>{
+fastify.get('/genre/:type', async(request,reply)=>{
+    reply.code(200).send({data:"not yet done"});
+});
+
+fastify.get('/info/:animeId', async(request,reply)=>{
     return fetchWithParams(animeInfo, request, reply);
 });
 
-app.get('/watch/:episodeId', async(request,reply)=>{
+fastify.get('/watch/:episodeId', async(request,reply)=>{
     return fetchWithParams(episodeSources, request, reply);
 });
-app.get('/servers/:episodeId', async(request,reply)=>{
-    reply.status(200).json({data:"not yet done"});
+
+fastify.get('/servers/:episodeId', async(request,reply)=>{
+    reply.code(200).send({data:"not yet done"});
     // return fetchWithParams(gogoanime.fetchEpisodeServers, request, reply);
 });
-app.get('/search/:data', async(request,reply)=>{
+
+fastify.get('/search/:data', async(request,reply)=>{
     return fetchWithParams(searchAnime, request, reply);
 });
 
-
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+fastify.listen(PORT, (err, address) => {
+    if (err) throw err
+    console.log(`server listening on http://localhost:${PORT}`)
 });
-

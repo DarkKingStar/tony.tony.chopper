@@ -1,13 +1,14 @@
 const cheerio = require('cheerio')
-const axios = require('axios')
+const axios = require('axios');
 
 
 
-const baseUrl = 'https://anitaku.to/';
+const baseUrl = 'https://anitaku.to';
 const ajaxUrl = 'https://ajax.gogo-load.com/ajax';
 
 
 const animeInfo = async (id) => {
+    console.log("id:",id);
     id = `${baseUrl}/category/${id}`;
     const animeInfo = {
         id: '',
@@ -29,10 +30,13 @@ const animeInfo = async (id) => {
             .text()
             .trim()
             .split('Released: ')[1];
-        animeInfo.description = $('div.anime_info_body_bg > p:nth-child(5)')
-            .text()
-            .trim()
-            .replace('Plot Summary: ', '');
+        const descriptionParagraphs = $('div.anime_info_body_bg > div.description > p');
+        let descriptionTextArray = [];
+        descriptionParagraphs.each((i, el) => {
+            const paragraphText = $(el).text().trim();
+            descriptionTextArray.push(paragraphText);
+        });
+        animeInfo.description = descriptionTextArray.join(' \n ');
         animeInfo.subOrDub = animeInfo.title.toLowerCase().includes('dub') ? 'dub' : 'sub';
         animeInfo.type = $('div.anime_info_body_bg > p:nth-child(4) > a')
             .text()
@@ -46,7 +50,7 @@ const animeInfo = async (id) => {
             .replace('Other name: ', '')
             .trim()
             .replace(/;/g, ',');
-        $('div.anime_info_body_bg > p:nth-child(6) > a').each((i, el) => {
+        $('div.anime_info_body_bg > p:nth-child(7) > a').each((i, el) => {
             var _a;
             (_a = animeInfo.genres) === null || _a === void 0 ? void 0 : _a.push($(el).attr('title').toString());
         });
@@ -62,15 +66,15 @@ const animeInfo = async (id) => {
             (_a = animeInfo.episodes) === null || _a === void 0 ? void 0 : _a.push({
                 id: (_b = $(el).find('a').attr('href')) === null || _b === void 0 ? void 0 : _b.split('/')[1],
                 number: parseFloat($(el).find(`div.name`).text().replace('EP ', '')),
-                url: `${baseUrl}/${(_c = $(el).find(`a`).attr('href')) === null || _c === void 0 ? void 0 : _c.trim()}`,
             });
         });
         animeInfo.episodes = animeInfo.episodes.reverse();
         animeInfo.totalEpisodes = parseInt(ep_end !== null && ep_end !== void 0 ? ep_end : '0');
         return animeInfo;
+       
     }
     catch (err) {
-        throw new Error(`failed to fetch anime info: ${err}`);
+        return {error:"true", axios:err.message, message:"Invalid Anime Id or Anime not found"}
     }
 };
 

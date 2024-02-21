@@ -1,5 +1,6 @@
 const cheerio = require('cheerio')
-const axios = require('axios')
+const axios = require('axios');
+const { animeInfo } = require('./detailsfetcher');
 
 
 
@@ -19,7 +20,7 @@ const searchAnime = async(query, page=1) =>{
         const $ = (0, cheerio.load)(res.data);
         searchResult.hasNextPage =
             $('div.anime_name.new_series > div > div > ul > li.selected').next().length > 0;
-        $('div.last_episodes > ul > li').each((i, el) => {
+        $('div.last_episodes > ul > li').each(async(i, el) => {
             var _a;
             searchResult.results.push({
                 id: (_a = $(el).find('p.name > a').attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')[2],
@@ -35,7 +36,7 @@ const searchAnime = async(query, page=1) =>{
         return searchResult;
     }
     catch (err) {
-        throw new Error(err.message);
+        return {error:"true", axios:err.message, message:"Invalid search text, no Anime found"}
     }
 }
 
@@ -62,7 +63,7 @@ const recentEpisodes = async(type=1,page=1) =>{
         };
     }
     catch (err) {
-        throw new Error('Something went wrong. Please try again later.');
+        return {error:"true", axios:err.message, message:'Something went wrong. Please try again later.'}
     }
 }
 
@@ -87,7 +88,7 @@ const topAiring = async (page = 1) => {
         };
     }
     catch (err) {
-        throw new Error('Something went wrong. Please try again later.');
+        return {error:"true", axios:err.message, message:'Something went wrong. Please try again later.'}
     }
 };
 
@@ -114,7 +115,7 @@ const popularAnime = async (page = 1,type = 1) => {
         };
     }
     catch (err) {
-        throw new Error('Something went wrong. Please try again later.');
+        return {error:"true", axios:err.message, message:'Something went wrong. Please try again later.'}
     }
 };
 
@@ -141,7 +142,7 @@ const animeMovies = async (page = 1,type = 1) => {
         };
     }
     catch (err) {
-        throw new Error('Something went wrong. Please try again later.');
+        return {error:"true", axios:err.message, message:'Something went wrong. Please try again later.'}
     }
 };
 
