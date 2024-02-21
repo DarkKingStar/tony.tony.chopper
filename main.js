@@ -61,10 +61,6 @@ fastify.get('/watch/:episodeId', async(request,reply)=>{
     return fetchWithParams(episodeSources, request, reply);
 });
 
-fastify.get('/servers/:episodeId', async(request,reply)=>{
-    reply.code(200).send({data:"not yet done"});
-    // return fetchWithParams(gogoanime.fetchEpisodeServers, request, reply);
-});
 
 fastify.get('/search/:data', async(request,reply)=>{
     return fetchWithParams(searchAnime, request, reply);
