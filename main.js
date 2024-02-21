@@ -1,9 +1,5 @@
 const fastify = require('fastify')({ 
     logger: true,
-    http2: true,
-    https: {
-        allowHTTP1: true,
-    },
     keepAliveTimeout: 10000 
 });
 const cors = require('cors');
