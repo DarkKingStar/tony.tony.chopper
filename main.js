@@ -1,4 +1,11 @@
-const fastify = require('fastify')({ logger: false });
+const fastify = require('fastify')({ 
+    logger: true,
+    http2: true,
+    https: {
+        allowHTTP1: true,
+    },
+    keepAliveTimeout: 10000 
+});
 const cors = require('cors');
 const welcomeData = require('./welcome.js');
 const { searchAnime, recentEpisodes, topAiring, popularAnime, animeMovies } = require('./src/animefetcher.js');
