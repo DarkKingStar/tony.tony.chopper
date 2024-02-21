@@ -67,7 +67,7 @@ fastify.get('/search/:data', async(request,reply)=>{
     return fetchWithParams(searchAnime, request, reply);
 });
 
-fastify.listen(PORT, (err, address) => {
+fastify.listen(PORT,'0.0.0.0', (err, address) => {
     if (err) throw err
     console.log(`server listening on http://localhost:${PORT}`)
 });
