@@ -1,5 +1,6 @@
 const fastify = require('fastify')({ 
-    logger: false
+    logger: true,
+    keepAliveTimeout: 10000 
 });
 const cors = require('cors');
 const welcomeData = require('./welcome.js');
