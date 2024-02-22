@@ -1,3 +1,6 @@
+const moment = require('moment-timezone');
+
+
 async function fetchWithParams(ParamsFunction, request, reply){
     const id = request.params.episodeId || request.params.animeId || request.params.data || request.params.type || null;
     const page = request.query.p || null;
@@ -39,26 +42,18 @@ const removeDuplicateInList = (animeArray) => {
         return false;
     });
 };
-const getLocaleTimeFromJST = (jstTime)=>{
-let [hours, minutes] = jstTime.split(":").map(Number);
-
-// Create a Date object for the current date in JST
-let dateInJst = new Date();
-dateInJst.setHours(hours);
-dateInJst.setMinutes(minutes);
-
-// Convert to local time
-let options = { hour: '2-digit', minute: '2-digit' };
-let localTime = dateInJst.toLocaleTimeString(undefined, options);
-
-// Get the local time zone
-let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-return [localTime,timeZone];
+const getGlobalTimeFromJST = (jstTime)=>{
+    let [hours, minutes] = jstTime.split(":").map(Number);
+    let dateInJst = moment().tz("Asia/Tokyo");
+    dateInJst.set({hour: hours, minute: minutes});
+    let utc = dateInJst.clone().tz("UTC");
+    return utc;
 }
+
+
 module.exports={
     fetchWithParams,
     fetchWithQuery,
     removeDuplicateInList,
-    getLocaleTimeFromJST
+    getGlobalTimeFromJST
 }

@@ -1,7 +1,7 @@
 const cheerio = require("cheerio");
 const axios = require("axios");
 const _ = require("lodash");
-const { removeDuplicateInList,getLocaleTimeFromJST } = require("../utils/helpers");
+const { removeDuplicateInList,getGlobalTimeFromJST } = require("../utils/helpers");
 const { searchAnime } = require("./animefetcher");
 
 const baseUrl = "https://anitaku.to";
@@ -132,9 +132,8 @@ const fetchAnimeListbyDay = async (list, day, page) => {
               item?.titles[1]?.title,
               page
             );
-            const localeTime = getLocaleTimeFromJST(item?.broadcast?.time)
+            const GlobalTime = getGlobalTimeFromJST(item?.broadcast?.time)
             list.push({
-              mal_id: item?.mal_id,
               id: searchInGogo?.results[0]?.id || "",
               title: item?.title,
               otherTitle: item?.titles[1]?.title,
@@ -143,7 +142,7 @@ const fetchAnimeListbyDay = async (list, day, page) => {
               genre: genre,
               broadcast: item?.broadcast?.string,
               broadcastTime: item?.broadcast?.time,
-              localeTime: localeTime,
+              localeTime: GlobalTime,
               duration: item?.duration,
             });
           } catch (error) {
