@@ -1,8 +1,7 @@
 const cheerio = require("cheerio");
 const axios = require("axios");
 const _ = require("lodash");
-const { removeDuplicateInList } = require("../utils/helpers");
-const { response } = require("express");
+const { removeDuplicateInList,getLocaleTimeFromJST } = require("../utils/helpers");
 const { searchAnime } = require("./animefetcher");
 
 const baseUrl = "https://anitaku.to";
@@ -86,10 +85,24 @@ const animeScheduleList = async (page = 1) => {
       throw new Error("No data Found.");
     }
     const animeListWithoutDuplicate = removeDuplicateInList(animeList);
+    const animeListSorted = animeListWithoutDuplicate.sort((a, b) => {
+        let timeA = a.broadcastTime.split(':').map(Number);
+        let timeB = b.broadcastTime.split(':').map(Number);
+      
+        // Compare hours first
+        if (timeA[0] < timeB[0]) return -1;
+        if (timeA[0] > timeB[0]) return 1;
+      
+        // If hours are equal, compare minutes
+        if (timeA[1] < timeB[1]) return -1;
+        if (timeA[1] > timeB[1]) return 1;
+      
+        return 0;  // If both hours and minutes are equal
+      });
     return {
       day: day,
-      count: animeListWithoutDuplicate?.length || 0,
-      results: animeListWithoutDuplicate,
+      count: animeListSorted?.length || 0,
+      results: animeListSorted,
     };
   } catch (err) {
     return {
@@ -119,6 +132,7 @@ const fetchAnimeListbyDay = async (list, day, page) => {
               item?.titles[1]?.title,
               page
             );
+            const localeTime = getLocaleTimeFromJST(item?.broadcast?.time)
             list.push({
               mal_id: item?.mal_id,
               id: searchInGogo?.results[0]?.id || "",
@@ -127,7 +141,9 @@ const fetchAnimeListbyDay = async (list, day, page) => {
               image: item?.images?.jpg?.image_url,
               status: item?.status,
               genre: genre,
-              broadcastTime: item?.broadcast?.string,
+              broadcast: item?.broadcast?.string,
+              broadcastTime: item?.broadcast?.time,
+              localeTime: localeTime,
               duration: item?.duration,
             });
           } catch (error) {
