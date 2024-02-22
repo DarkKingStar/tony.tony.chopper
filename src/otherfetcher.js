@@ -134,6 +134,7 @@ const fetchAnimeListbyDay = async (list, day, page) => {
             );
             const GlobalTime = getGlobalTimeFromJST(item?.broadcast?.time)
             list.push({
+              mal_id:item?.mal_id,
               id: searchInGogo?.results[0]?.id || "",
               title: item?.title,
               otherTitle: item?.titles[1]?.title,
