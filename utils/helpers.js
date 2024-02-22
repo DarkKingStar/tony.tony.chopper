@@ -29,8 +29,19 @@ async function fetchWithQuery(QueryFunction, request, reply){
         console.error("Error while fetching: ",err);
     }
 }
+const removeDuplicateInList = (animeArray) => {
+    const uniqueMalIds = new Set();
+    return animeArray.filter((anime) => {
+        if (!uniqueMalIds.has(anime.mal_id)) {
+            uniqueMalIds.add(anime.mal_id);
+            return true;
+        }
+        return false;
+    });
+};
 
 module.exports={
     fetchWithParams,
-    fetchWithQuery
+    fetchWithQuery,
+    removeDuplicateInList
 }

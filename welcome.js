@@ -9,10 +9,11 @@ const welcomeData = {
                 "New Top Tier Anime": "/top-airing?p='pageNo'",
                 "Recently Released Anime":"/recent-released?p='pageNo'",
                 "Currently Popular Anime":"/popular?p='pageNo'",
-                "Anime Movies":"/animemovies?p='pageNo'"
+                "Anime Movies":"/animemovies?p='pageNo'",
               },
             'All genres of Anime List':"/genres",
             'Get Anime of the type genre':"/genre/:type",
+            'Get daily anime schedule of anime released': "/schedule",
           },
           "github": "All Infomation is provided in the github repo: https://github.com/DarkKingStar/tony.tony.chopper"
 };

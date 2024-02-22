@@ -8,7 +8,7 @@ const { searchAnime, recentEpisodes, topAiring, popularAnime, animeMovies } = re
 const { animeInfo } = require("./src/detailsfetcher.js");
 const {episodeSources} = require("./src/streamfetcher.js");
 const {fetchWithParams, fetchWithQuery}= require("./utils/helpers.js");
-const { genreList, genreTypeAnimeList } = require('./src/genrefetcher.js');
+const { genreList, genreTypeAnimeList, animeScheduleList } = require('./src/otherfetcher.js');
 
 const PORT = process.env.PORT || 3000;
 
@@ -48,6 +48,10 @@ fastify.get('/anime-movies', async(request,reply)=>{
 
 fastify.get('/genres', async(request,reply)=>{
     fetchWithQuery(genreList,request,reply);
+});
+
+fastify.get('/schedule', async(request,reply)=>{
+    fetchWithQuery(animeScheduleList,request,reply);
 });
 
 fastify.get('/genre/:type', async(request,reply)=>{
