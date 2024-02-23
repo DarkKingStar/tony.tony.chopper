@@ -30,13 +30,7 @@ const animeInfo = async (id) => {
             .text()
             .trim()
             .split('Released: ')[1];
-        const descriptionParagraphs = $('div.anime_info_body_bg > div.description > p');
-        let descriptionTextArray = [];
-        descriptionParagraphs.each((i, el) => {
-            const paragraphText = $(el).text().trim();
-            descriptionTextArray.push(paragraphText);
-        });
-        animeInfo.description = descriptionTextArray.join(' \n ');
+        animeInfo.description = $('div.anime_info_body_bg > div.description').text();
         animeInfo.subOrDub = animeInfo.title.toLowerCase().includes('dub') ? 'dub' : 'sub';
         animeInfo.type = $('div.anime_info_body_bg > p:nth-child(4) > a')
             .text()
