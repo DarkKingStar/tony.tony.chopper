@@ -76,6 +76,11 @@ const topAiring = async (page = 1) => {
             topAiring.push({
                 id: (_a = $(el).find('a:nth-child(1)').attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')[2],
                 title: $(el).find('a:nth-child(1)').attr("title").trim(),
+                recentEpisodes: $(el).find('p').text().trim().split(":")[2].replace('\n','').trim(),
+                genres: $(el)
+                .find('p.genres > a')
+                .map((i, el) => $(el).attr('title'))
+                .get(),
                 image: (_b = $(el).find('a:nth-child(1) > div').attr('style')) === null || _b === void 0 ? void 0 : _b.match('(https?://.*.(?:png|jpg))')[0],
             });
         });
