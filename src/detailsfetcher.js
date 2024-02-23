@@ -26,7 +26,7 @@ const animeInfo = async (id) => {
             .trim();
         animeInfo.url = id;
         animeInfo.image = $('div.anime_info_body_bg > img').attr('src');
-        animeInfo.releaseDate = $('div.anime_info_body_bg > p:nth-child(7)')
+        animeInfo.releaseDate = $('div.anime_info_body_bg > p:nth-child(8)')
             .text()
             .trim()
             .split('Released: ')[1];
