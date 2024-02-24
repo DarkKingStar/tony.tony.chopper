@@ -1,15 +1,6 @@
-const fastify = require('fastify')({ 
-    logger: false,
-    keepAliveTimeout: 10000 
-});
-const cors = require('cors');
+const fastify = require('fastify')({logger: true });
 const welcomeData = require('./welcome.js');
-const { searchAnime, recentEpisodes, topAiring, popularAnime, animeMovies } = require('./src/animefetcher.js');
-const { animeInfo } = require("./src/detailsfetcher.js");
-const {episodeSources} = require("./src/streamfetcher.js");
-const {fetchWithParams, fetchWithQuery}= require("./utils/helpers.js");
-const { genreList, genreTypeAnimeList, animeScheduleList } = require('./src/otherfetcher.js');
-
+const { getRoutes } = require('./route/getRoutes.js');
 const PORT = process.env.PORT || 3000;
 
 fastify.register(require('@fastify/cors'), { 
@@ -30,48 +21,11 @@ fastify.get('/', async (request, reply) => {
     }
 });
 
-fastify.get('/recent-released', async(request,reply)=>{
-    fetchWithQuery(recentEpisodes, request, reply);
-});
-
-fastify.get('/top-airing', async(request,reply)=>{
-    fetchWithQuery(topAiring, request, reply);
-});
-
-fastify.get('/popular', async(request,reply)=>{
-    fetchWithQuery(popularAnime, request, reply);   
-});
-
-fastify.get('/anime-movies', async(request,reply)=>{
-    fetchWithQuery(animeMovies, request, reply);
-});
-
-fastify.get('/genres', async(request,reply)=>{
-    fetchWithQuery(genreList,request,reply);
-});
-
-fastify.get('/schedule', async(request,reply)=>{
-    fetchWithQuery(animeScheduleList,request,reply);
-});
-
-fastify.get('/genre/:type', async(request,reply)=>{
-    return fetchWithParams(genreTypeAnimeList, request, reply);
-});
-
-fastify.get('/info/:animeId', async(request,reply)=>{
-    return fetchWithParams(animeInfo, request, reply);
-});
-
-fastify.get('/watch/:episodeId', async(request,reply)=>{
-    return fetchWithParams(episodeSources, request, reply);
-});
-
-
-fastify.get('/search/:data', async(request,reply)=>{
-    return fetchWithParams(searchAnime, request, reply);
-});
+getRoutes.forEach((item)=>{
+    fastify.get(item.route, async(request, reply)=> item.fetchFunction(item.fetcher,request,reply))
+})
 
 fastify.listen(PORT,'0.0.0.0', (err, address) => {
     if (err) throw err
-    console.log(`server listening on http://localhost:${PORT}`)
+    console.log(`server: ${address} listening on http://localhost:${PORT}`)
 });
