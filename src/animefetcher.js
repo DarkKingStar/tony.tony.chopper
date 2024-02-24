@@ -39,7 +39,7 @@ const searchAnime = async(query, page=1) =>{
     }
 }
 
-const recentEpisodes = async(type=1,page=1) =>{
+const recentEpisodes = async(page=1,type=1) =>{
     try {
         const res = await axios.get(`${baseUrl}/home.html?page=${page}&type=${type}`);
         const $ = (0, cheerio.load)(res.data);
