@@ -1,8 +1,8 @@
-const { searchAnime, recentEpisodes, topAiring, popularAnime, animeMovies } = require('../src/animefetcher.js');
-const { animeInfo } = require("../src/detailsfetcher.js");
-const {episodeSources} = require("../src/streamfetcher.js");
+const { searchAnime, recentEpisodes, topAiring, popularAnime, animeMovies } = require('../src/Extractor/animefetcher.js');
+const { animeInfo } = require("../src/Extractor/detailsfetcher.js");
+const {episodeSources} = require("../src/Extractor/streamfetcher.js");
+const { genreList, genreTypeAnimeList, animeScheduleList } = require('../src/Extractor/otherfetcher.js');
 const {fetchWithParams, fetchWithQuery}= require("../utils/helpers.js");
-const { genreList, genreTypeAnimeList, animeScheduleList } = require('../src/otherfetcher.js');
 
 const getRoutes = [
     {

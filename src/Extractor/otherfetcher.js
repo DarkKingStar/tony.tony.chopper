@@ -1,7 +1,7 @@
 const cheerio = require("cheerio");
 const axios = require("axios");
 const _ = require("lodash");
-const { removeDuplicateInList,getGlobalTimeFromJST } = require("../utils/helpers");
+const { removeDuplicateInList,getGlobalTimeFromJST } = require("../../utils/helpers");
 const { searchAnime } = require("./animefetcher");
 
 const baseUrl = "https://anitaku.to";
