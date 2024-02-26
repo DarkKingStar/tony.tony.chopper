@@ -2,6 +2,7 @@ const fastify = require("fastify")({ logger: false });
 const welcomeData = require("./welcome.js");
 const { getRoutes } = require("./route/getRoutes.js");
 const { postRoutesNoAuth, postRoutesAuth } = require("./route/postRoutes.js");
+const { request } = require("express");
 const PORT = process.env.PORT || 3000;
 
 fastify.register(require("@fastify/cors"), {
@@ -40,8 +41,7 @@ postRoutesAuth.forEach((item)=>{
   );
 })
 
-
-fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
+fastify.listen(PORT, "0.0.0.0", (err, address) => {
   if (err) throw err;
   console.log(`server: ${address} listening on http://localhost:${PORT}`);
 });
