@@ -91,6 +91,7 @@ const getUserInfo = async (userId, db) => {
   const usersCollection = db.collection('users');
   try {
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+    user.password = undefined;
     return user;
   } catch (error) {
     throw error;

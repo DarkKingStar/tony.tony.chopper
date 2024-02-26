@@ -2,7 +2,6 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { createNewUser, checkForUser, getUserInfo, deleteUser } = require("./connector");
-const { request } = require("express");
 
 const jwt_secret_key = process.env.JWT_SECRET;
 
@@ -27,9 +26,10 @@ const signUp = async (request, reply, db) => {
       data: 'User has been created successfully!',
     });
   } catch (err) {
+    console.log(err);
     return reply.code(500).send({
       error: true,
-      message: err.code === 11000 ? 'User already exists' : 'Something went wrong. Please try again later!',
+      message: 'Something went wrong. Please try again later!',
     });
   }
 };
@@ -75,11 +75,11 @@ const login = async (request, reply, db) => {
       // Omit password from the response
       user.password = undefined;
 
-      const jsontoken = jwt.sign({ user_details: user }, jwt_secret_key, {
+      const jsontoken = jwt.sign({ userDetails: user }, jwt_secret_key, {
         expiresIn: '1h',
       });
 
-      const refreshtoken = jwt.sign({ user_details: user }, jwt_secret_key, {
+      const refreshtoken = jwt.sign({ userDetails: user }, jwt_secret_key, {
         expiresIn: '3650d',
       });
 
@@ -118,14 +118,14 @@ const login = async (request, reply, db) => {
 //         if (password) {
 //           results.password = undefined;
 //           const jsontoken = jwt.sign(
-//             { user_details: results },
+//             { userDetails: results },
 //             jwt_secret_key,
 //             {
 //               expiresIn: "1h",
 //             }
 //           );
 //           const refreshtoken = jwt.sign(
-//             { user_details : results },
+//             { userDetails : results },
 //             jwt_secret_key,
 //             {
 //               expiresIn: "3650d",
@@ -153,8 +153,8 @@ const login = async (request, reply, db) => {
 
 // regenarate token
 const regenerateToken = async (request, reply, db) => {
-  const user_details = request.decoded.user_details;
-  request.body.email = request.decoded.user_details.email;
+  const userDetails = request.decoded.userDetails;
+  request.body.email = request.decoded.userDetails.email;
   const body = request.body;
   checkForUser(body, (err, results) => {
     try {
@@ -165,14 +165,14 @@ const regenerateToken = async (request, reply, db) => {
         });
       } else {
         const jsontoken = jwt.sign(
-          { user_details: user_details },
+          { userDetails: userDetails },
           jwt_secret_key,
           {
             expiresIn: "1h",
           }
         );
         const refreshtoken = jwt.sign(
-          { user_details : user_details },
+          { userDetails : userDetails },
           jwt_secret_key,
           {
             expiresIn: "3650d",
@@ -194,15 +194,32 @@ const regenerateToken = async (request, reply, db) => {
 
 // get user details
 const getUserDetails = async (request,reply, db) => {
-  return reply.code(200).send({
-    user_details: request.decoded.user_details
-  })
+  try{
+    const userId = request.decoded.userDetails._id;
+    const user = await getUserInfo(userId, db);
+      if (!user) {
+        return reply.code(500).send({
+          error: true,
+          message: "User doesn't exist!",
+        });
+      }else{
+        return reply.code(200).send({
+          userDetails: user
+        })
+      }
+  }catch(err){
+    console.log(err);
+    return reply.code(500).send({
+      error: true,
+      message: 'Something went wrong. Please try again later!',
+    });
+  }
 }
 
 // delete user's account
 const deleteAccount = async (request, reply, db) => {
   try {
-    const userId = request.decoded.user_details._id;
+    const userId = request.decoded.userDetails._id;
     const password = request.body.password;
     const user = await getUserInfo(userId, db);
     if (!user) {
@@ -235,7 +252,7 @@ const deleteAccount = async (request, reply, db) => {
   }
 };
 // const deleteAccount = async (request, reply, db) => {
-//   request.body.id = request.decoded.user_details.id
+//   request.body.id = request.decoded.userDetails.id
 //   const body = request.body;
 //   getHashPassword(body, (err, results)=>{
 //     try{
