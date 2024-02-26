@@ -65,7 +65,7 @@ const checkForUser = async (data, db) => {
 const deleteUser = async (userId, db) => {
   const usersCollection = db.collection('users');
   try {
-    await usersCollection.deleteOne({ _id: userId });
+    await usersCollection.deleteOne({ _id: new ObjectId(userId) });
   } catch (error) {
     throw error;
   }

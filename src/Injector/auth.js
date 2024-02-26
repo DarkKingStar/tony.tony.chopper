@@ -13,7 +13,13 @@ const signUp = async (request, reply, db) => {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     body.password = await bcrypt.hash(body.password, salt);
-
+    const user = await checkForUser(body, db);
+    if (user) {
+      return reply.code(500).send({
+        error: true,
+        message: "User exist! please login.",
+      });
+    }
     await createNewUser(body, db);
 
     return reply.code(200).send({
