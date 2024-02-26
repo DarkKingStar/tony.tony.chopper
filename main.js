@@ -1,4 +1,3 @@
-require('dotenv').config();
 const fastify = require("fastify")({ logger: false });
 const welcomeData = require("./welcome.js");
 const { getRoutes } = require("./route/getRoutes.js");
