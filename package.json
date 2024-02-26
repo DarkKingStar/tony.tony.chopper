@@ -1,5 +1,8 @@
 {
   "name": "chopper.server",
+  "engines": {
+    "node": "20.10.0"
+  },
   "version": "1.0.0",
   "description": "GogoAnime API to fetch anime and Streaming m3u8 files",
   "main": "main.js",
