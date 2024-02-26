@@ -1,6 +1,8 @@
-const fastify = require("fastify")({ logger: true });
+const fastify = require("fastify")({ logger: false });
 const welcomeData = require("./welcome.js");
 const { getRoutes } = require("./route/getRoutes.js");
+const { postRoutesNoAuth, postRoutesAuth } = require("./route/postRoutes.js");
+const { request } = require("express");
 const PORT = process.env.PORT || 3000;
 
 fastify.register(require("@fastify/cors"), {
@@ -26,6 +28,18 @@ getRoutes.forEach((item) => {
     item.fetchFunction(item.fetcher, request, reply)
   );
 });
+
+postRoutesNoAuth.forEach((item)=>{
+  fastify.post(item.route, async(request,reply) => 
+    item.postFuntion(request,reply)
+  );
+})
+
+postRoutesAuth.forEach((item)=>{
+  fastify.post(item.route, { preHandler: item.authFunction }, async(request, reply) => 
+    item.postFuntion(request, reply)
+  );
+})
 
 fastify.listen(PORT, "0.0.0.0", (err, address) => {
   if (err) throw err;
