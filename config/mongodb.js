@@ -12,8 +12,6 @@ async function connectToMongoDB() {
   }
 
   const connectionOptions = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverApi: ServerApiVersion.v1,
   };
 

@@ -4,6 +4,8 @@ const { getRoutes } = require("./route/getRoutes.js");
 const { postRoutesNoAuth, postRoutesAuth } = require("./route/postRoutes.js");
 const { connectToMongoDB } = require("./config/mongodb.js");
 const PORT = process.env.PORT || 3000;
+const fs = require('fs');
+const path = require('path');
 
 fastify.register(require("@fastify/cors"), {
   origin: "*",
@@ -13,11 +15,15 @@ fastify.register(require("@fastify/cors"), {
 
 fastify.register(async (instance, options) => {
   const db = await connectToMongoDB();
+  // const db = {};
 
   instance.get("/", async (request, reply) => {
     try {
-      reply.code(200).send(welcomeData);
+      const htmlPath = path.join(__dirname, 'index.html');
+      const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+      reply.type('text/html').send(htmlContent);
     } catch (err) {
+      console.log(err);
       reply.code(500).send({
         status: 500,
         error: "Internal Error",

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chopper IO Api</title>
+    <style>
+      body {
+        background-color: #1a1a1a; /* Dark background color */
+        color: #ffffff; /* Light text color */
+        font-family: "Arial", sans-serif; /* Example font family */
+      }
+      h4 {
+        color: #ff004d; /* Yellow text color for the h4 tag */
+        font-family: "Arial", sans-serif; /* Example font family */
+      }
+      footer {
+        text-align: center;
+        background-color: #171717;
+      }
+      .container {
+        text-align: center;
+        min-height: 100vh;
+      }
+      .content {
+        margin: 0 auto;
+        width: fit-content;
+        padding: 20px 40px;
+        background-color: #2b2b2b; /* Darker background color */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      table {
+        background-color: #171717;
+        border-collapse: collapse;
+      }
+      th {
+        background-color: #474646;
+        text-align: center;
+        color: #faef5d;
+        font-size: 16px;
+        padding: 8px;
+      }
+      td {
+        font-size: 13px;
+        text-align: left;
+        padding: 8px 12px;
+      }
+      th,
+      td {
+        border: none;
+        outline: none;
+      }
+      .input-content {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .input-content div {
+        width: 100%;
+        max-width: 600px;
+      }
+      .input {
+        background-color: #2b2b2b;
+        border: none;
+        outline: none;
+        text-align: center;
+        color: #ffffff;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 14px;
+        margin-right: 8px;
+        width: 100%;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+      .input:focus {
+        outline: 2px solid #faef5d;
+      }
+      #gotobtn {
+        background-color: #701526;
+        border: none;
+        outline: none;
+        color: #ffffff;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 14px;
+        margin-right: 8px;
+        width: 30%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      #gotobtn:hover {
+        background-color: #ff004d;
+      }
+      .highlight{
+        background-color: #ff004d;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Chopper IO API</h1>
+      <h4>Unleash Your Inner Otaku</h4>
+      <div class="content">
+        <table>
+          <thead>
+            <tr>
+              <th>Route Name</th>
+              <th>Route Url</th>
+              <th>Input Value</th>
+              <th>Route Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Top Airing</td>
+              <td>/top-airing?p='pageNo'</td>
+              <td>pageNo</td>
+              <td>Get list of top Airing Anime</td>
+            </tr>
+            <tr>
+              <td>Recent Released</td>
+              <td>/recent-released?p='pageNo'</td>
+              <td>pageNo</td>
+              <td>Get list of Recently Released Anime</td>
+            </tr>
+            <tr>
+              <td>Popular</td>
+              <td>/popular?p='pageNo'</td>
+              <td>pageNo</td>
+              <td>Get list of Currently Popular Anime</td>
+            </tr>
+            <tr>
+              <td>Anime Movies</td>
+              <td>/animemovies?p='pageNo'</td>
+              <td>pageNo</td>
+              <td>Get list of Anime Movies</td>
+            </tr>
+            <tr>
+              <td>Genres</td>
+              <td>/genres</td>
+              <td>-</td>
+              <td>Get list of all genres</td>
+            </tr>
+            <tr>
+              <td>Genre</td>
+              <td>/genre/:type</td>
+              <td>type</td>
+              <td>Get list of all Anime of the type genre</td>
+            </tr>
+            <tr>
+              <td>Schedule</td>
+              <td>/schedule</td>
+              <td>-</td>
+              <td>Get daily anime schedule of anime released</td>
+            </tr>
+            <tr>
+              <td>Search</td>
+              <td>/search/:searchText</td>
+              <td>searchText</td>
+              <td>get the list of Anime by input text (Search)</td>
+            </tr>
+            <tr>
+              <td>Info</td>
+              <td>/info/:animeid</td>
+              <td>animeid</td>
+              <td>Get Anime INFO</td>
+            </tr>
+            <tr>
+              <td>Watch</td>
+              <td>/watch/:episodeId</td>
+              <td>episodeId</td>
+              <td>Get Streamable Video links (.m3u8)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="input-content">
+        <div>
+          <h3>Go to page: <span id="route"></span></h3>
+        </div>
+        <div>
+          <input type="text" id="input" class="input" />
+        </div>
+        <div>
+          <a href="" id="gotolink" target="_blank">
+            <button id="gotobtn">Go</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <p>
+        <a
+          style="color: #faef5d; text-decoration: none;"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/DarkKingStar/tony.tony.chopper"
+          >For more information, visit the GitHub repository</a
+        >
+      </p>
+      <p>Made with ❤️ by <span style="color: blue;">DarkKingStar</span></p>
+    </footer>
+  </body>
+  <script>
+    const inputContent = document.querySelector(".input-content");
+    var url = window.location.href;
+    var currentroute
+    var currentvalue
+
+    //on page load function
+    window.onload = function () {
+      inputContent.style.display = 'none';
+      //get  url of the site
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      const tableRows = document.querySelectorAll("tbody tr");
+      const route = document.getElementById("route");
+      tableRows.forEach(function (row) {
+        row.addEventListener("click", function () {
+          inputContent.style.display = 'flex';
+          const input = document.getElementById("input");
+          input.value = "";
+          const routeName = this.querySelector("td:nth-child(1)").textContent;
+          const routeUrl = this.querySelector("td:nth-child(2)").textContent;
+          const clickedInput = this.querySelector("td:nth-child(3)").textContent;
+          tableRows.forEach(function (row) {
+              row.classList.remove("highlight");            
+          })
+          this.classList.toggle("highlight");
+          route.innerHTML = routeName;
+          currentroute = routeUrl.slice(1);
+          currentvalue = clickedInput; 
+          changePlaceholder(clickedInput);
+          document.getElementById("input").focus();
+        });
+      });
+    });
+
+    // event listener funtion for input when value changed
+    document.getElementById("input").addEventListener("input", function () {
+      let link = url + currentroute.replace(currentvalue, this.value).replace(":","").replaceAll("'","");
+      document.getElementById("gotolink").href = link;
+    })
+
+
+    // A function to change the placeholder of an input element based on the clicked input.
+    function changePlaceholder(clickedInput){
+      const inputElement = document.getElementById("input");
+      inputElement.style.display = "block";
+      switch (clickedInput) {
+        case "pageNo":
+          inputElement.placeholder = "Enter the Page No (eg: 1, 2, 3, ...)";
+          break;
+        case "searchText":
+          inputElement.placeholder = "Enter Search Text (eg: naruto)";
+          break;
+        case "animeid":
+          inputElement.placeholder = "Enter Anime ID (eg: one-piece, one-punch-man,...)";
+          break;
+        case "episodeId":
+          inputElement.placeholder = "Enter Episode ID (eg: one-piece-episode-1, one-punch-man-episode-2,...)";
+          break;
+        case "type":
+          inputElement.placeholder = "Enter Genre Name (eg: action, adventure,...)";
+          break;
+        default:
+          document.getElementById("gotolink").href = url + currentroute;
+          inputElement.style.display = "none";
+      }
+    }
+  </script>
+</html>
