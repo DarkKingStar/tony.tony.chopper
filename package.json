@@ -22,6 +22,7 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^7.0.0",
+    "@getbrevo/brevo": "^2.0.0-beta.4",
     "ascii-url-encoder": "^1.2.0",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
@@ -37,7 +38,9 @@
     "moment-timezone": "^0.5.45",
     "mongodb": "^6.3.0",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.9.11",
     "request": "^2.88.2",
+    "sib-api-v3-sdk": "^8.5.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

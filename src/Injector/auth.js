@@ -14,46 +14,26 @@ const signUp = async (request, reply, db) => {
     body.password = await bcrypt.hash(body.password, salt);
     const user = await checkForUser(body, db);
     if (user) {
-      return reply.code(500).send({
+      return reply.code(200).send({
         error: true,
         message: "User exist! please login.",
       });
+    }else{
+      await createNewUser(body, db);
+      return reply.code(200).send({
+        error: false,
+        message: 'User has been created successfully!',
+      });
     }
-    await createNewUser(body, db);
-
-    return reply.code(200).send({
-      error: false,
-      data: 'User has been created successfully!',
-    });
   } catch (err) {
     console.log(err);
-    return reply.code(500).send({
+    return reply.code(200).send({
       error: true,
       message: 'Something went wrong. Please try again later!',
     });
   }
 };
 
-// const signUp = (request, reply, db) => {
-//   const body = request.body;
-//   const salt = bcrypt.genSaltSync(10);
-//   body.password = bcrypt.hashSync(body.password, salt);
-//   createNewUser(body, (err, results) => {
-//     if (err) {
-//       return reply.code(500).send({
-//         error: true,
-//         message:
-//           err?.code == "ER_DUP_ENTRY"
-//             ? "User already exists"
-//             : "Something went wrong. Please try again later!",
-//       });
-//     }
-//     return reply.code(200).send({
-//       error: false,
-//       data: "User has been created successfully!",
-//     });
-//   });
-// };
 
 // User login
 
@@ -63,7 +43,7 @@ const login = async (request, reply, db) => {
     const user = await checkForUser(body, db);
 
     if (!user) {
-      return reply.code(500).send({
+      return reply.code(200).send({
         error: true,
         message: "User doesn't exist",
       });
@@ -91,65 +71,20 @@ const login = async (request, reply, db) => {
         userDetails: user,
       });
     } else {
-      return reply.code(500).send({
+      return reply.code(200).send({
         error: true,
-        data: 'Incorrect password',
+        message: 'Incorrect password',
       });
     }
   } catch (err) {
     console.log(err);
-    return reply.code(500).send({
+    return reply.code(200).send({
       error: true,
       message: 'Something went wrong. Please try again later!',
     });
   }
 };
-// const login = async (request, reply, db) => {
-//   const body = request.body;
-//   checkForUser(body, (err, results) => {
-//     try {
-//       if (err) {
-//         return reply.code(500).send({
-//           error: true,
-//           message: "User doesn't exists",
-//         });
-//       } else if (results?.password) {
-//         let password = results?.password && bcrypt.compareSync(body?.password, results?.password);
-//         if (password) {
-//           results.password = undefined;
-//           const jsontoken = jwt.sign(
-//             { userDetails: results },
-//             jwt_secret_key,
-//             {
-//               expiresIn: "1h",
-//             }
-//           );
-//           const refreshtoken = jwt.sign(
-//             { userDetails : results },
-//             jwt_secret_key,
-//             {
-//               expiresIn: "3650d",
-//             }
-//           );
-//           return reply.code(200).send({
-//             error: false,
-//             message: "login successfully",
-//             access_token: jsontoken,
-//             refresh_token: refreshtoken,
-//             userDetails: results,
-//           });
-//         } else {
-//           return reply.code(500).send({
-//             error: true,
-//             data: "Incorrect password",
-//           });
-//         }
-//       }
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   });
-// };
+
 
 // regenarate token
 const regenerateToken = async (request, reply, db) => {
@@ -251,46 +186,6 @@ const deleteAccount = async (request, reply, db) => {
     });
   }
 };
-// const deleteAccount = async (request, reply, db) => {
-//   request.body.id = request.decoded.userDetails.id
-//   const body = request.body;
-//   getHashPassword(body, (err, results)=>{
-//     try{
-//       if(err){
-//         return reply.code(500).send({
-//           error: true,
-//           message: "User Doesn't exists",
-//         });
-//       }
-//       let password = results?.password && bcrypt.compareSync(body?.password, results?.password);
-//       if(password){
-//         deleteUser(body, (err,results)=>{
-//           try{
-//             if(err){
-//               return reply.code(500).send({
-//                 error: true,
-//                 message: "Something went wrong. Please try again later!",
-//               });
-//             }
-//             return reply.code(200).send({
-//               error: true,
-//               message: "User's Account Deleted Successfully",
-//             });
-//           }catch(err){
-//             console.log(err)
-//           }
-//         })
-//       }else{
-//         return reply.code(401).send({
-//           error: true,
-//           message: "Invalid password!",
-//         });
-//       }
-//     }catch(err){
-//       console.log(err)
-//     }
-//   })
-// };
 
 
 module.exports = {

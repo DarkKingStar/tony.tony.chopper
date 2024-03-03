@@ -4,7 +4,7 @@ import welcomeData from './welcome.js'
 import dotenv from 'dotenv';
 
 //fetcher import
-import { fetchAnimeMovies, fetchPopularAnime, fetchRecentReleased, fetchTopAiring } from "./Fetcher/fetchAnimeList.js";
+import { fetchAnimeMovies, fetchPopularAnime, fetchRecentReleased, fetchnewSeason } from "./Fetcher/fetchAnimeList.js";
 import handleFetchingListRoutes from "./Routes/handleFetchingListRoutes.js";
 import handleFetchingInfoRoutes from "./Routes/handleFetchingInfoRoutes.js";
 
@@ -40,8 +40,8 @@ app.get('/', async (req, res) => {
 app.get('/recent-released', async (request,reply) =>{
     handleFetchingListRoutes(request, reply, fetchRecentReleased);
 });
-app.get('/top-airing', async (request,reply) =>{
-    handleFetchingListRoutes(request, reply, fetchTopAiring);
+app.get('/new-season', async (request,reply) =>{
+    handleFetchingListRoutes(request, reply, fetchnewSeason);
 });
 app.get('/popular', async (request,reply) =>{
     handleFetchingListRoutes(request, reply, fetchPopularAnime);

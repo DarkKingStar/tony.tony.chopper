@@ -66,29 +66,25 @@ const recentEpisodes = async(page=1,type=1) =>{
     }
 }
 
-const topAiring = async (page = 1) => {
+const newSeason = async (page = 1,type=1) => {
     try {
-        const res = await axios.get(`${ajaxUrl}/page-recent-release-ongoing.html?page=${page}`);
+        const res = await axios.get(`${baseUrl}/new-season.html?page=${page}&type=${type}`);
         const $ = (0, cheerio.load)(res.data);
-        const topAiring = [];
-        $('div.added_series_body.popular > ul > li').each((i, el) => {
-            var _a, _b;
-            topAiring.push({
-                id: (_a = $(el).find('a:nth-child(1)').attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')[2],
-                title: $(el).find('a:nth-child(1)').attr("title").trim(),
-                recentEpisodes: $(el).find('p').text().trim().split(":")[2].replace('\n','').trim(),
-                genres: $(el)
-                .find('p.genres > a')
-                .map((i, el) => $(el).attr('title'))
-                .get(),
-                image: (_b = $(el).find('a:nth-child(1) > div').attr('style')) === null || _b === void 0 ? void 0 : _b.match('(https?://.*.(?:png|jpg))')[0],
+        const popularAnime = [];
+        $('div.last_episodes > ul > li').each((i, el) => {
+            var _a, _b, _c, _d;
+            popularAnime.push({
+                id: (_b = (_a = $(el).find('a').attr('href')) === null || _a === void 0 ? void 0 : _a.split('/')[2]) === null || _b === void 0 ? void 0 : _b.split('-episode')[0],
+                released: $(el).find('p.released').text().replace('Released: ', '').replace('\n','').trim(),
+                title: $(el).find('p.name > a').text().trim(),
+                image: $(el).find('div > a > img').attr('src'),
             });
         });
-        const hasNextPage = $('div.anime_name.comedy > div > div > ul > li.selected').next().length > 0;
+        const hasNextPage = $('div.anime_name_pagination > div > ul > li.selected').next().length > 0;
         return {
             currentPage: page,
             hasNextPage: hasNextPage,
-            results: topAiring,
+            results: popularAnime,
         };
     }
     catch (err) {
@@ -154,7 +150,7 @@ const animeMovies = async (page = 1,type = 1) => {
 module.exports = {
     searchAnime,
     recentEpisodes,
-    topAiring,
+    newSeason,
     popularAnime,
     animeMovies
 };

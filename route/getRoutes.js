@@ -1,4 +1,4 @@
-const { searchAnime, recentEpisodes, topAiring, popularAnime, animeMovies } = require('../src/Extractor/animefetcher.js');
+const { searchAnime, recentEpisodes, newSeason, popularAnime, animeMovies } = require('../src/Extractor/animefetcher.js');
 const { animeInfo } = require("../src/Extractor/detailsfetcher.js");
 const {episodeSources} = require("../src/Extractor/streamfetcher.js");
 const { genreList, genreTypeAnimeList, animeScheduleList } = require('../src/Extractor/otherfetcher.js');
@@ -11,9 +11,9 @@ const getRoutes = [
         fetcher: recentEpisodes
     },
     {
-        route: '/top-airing',
+        route: '/new-season',
         fetchFunction: fetchWithQuery,
-        fetcher: topAiring
+        fetcher: newSeason
     },
     {
         route: '/popular',

@@ -6,10 +6,10 @@ const welcomeData = {
             'Get Streamable Video links (.m3u8)':"/watch/:episodeId",
             'list of Anime in Categories': 
               {
-                "New Top Tier Anime": "/top-airing?p='pageNo'",
+                "New Season Anime": "/new-season?p='pageNo'",
                 "Recently Released Anime":"/recent-released?p='pageNo'",
                 "Currently Popular Anime":"/popular?p='pageNo'",
-                "Anime Movies":"/animemovies?p='pageNo'",
+                "Anime Movies":"/anime-movies?p='pageNo'",
               },
             'All genres of Anime List':"/genres",
             'Get Anime of the type genre':"/genre/:type",
