@@ -89,51 +89,38 @@ const login = async (request, reply, db) => {
 // regenarate token
 const regenerateToken = async (request, reply, db) => {
   const userDetails = request.decoded.userDetails;
-  request.body.email = request.decoded.userDetails.email;
-  const body = request.body;
-  checkForUser(body, (err, results) => {
-    try {
-      if (err) {
-        return reply.code(500).send({
-          error: true,
-          message: "Invalid Refresh Token",
-        });
-      } else {
-        const jsontoken = jwt.sign(
-          { userDetails: userDetails },
-          jwt_secret_key,
-          {
-            expiresIn: "1h",
-          }
-        );
-        const refreshtoken = jwt.sign(
-          { userDetails : userDetails },
-          jwt_secret_key,
-          {
-            expiresIn: "3650d",
-          }
-        );
-        return reply.code(200).send({
-          error: false,
-          message: "Token refreshed Successfully!",
-          access_token: jsontoken,
-          refresh_token: refreshtoken,
-        });
-      }
-    }catch(err){
-      console.log(err)
+  const jsontoken = jwt.sign(
+    { userDetails: userDetails },
+    jwt_secret_key,
+    {
+      expiresIn: "1h",
     }
-    })
-  
-};
+  );
+  const refreshtoken = jwt.sign(
+    { userDetails : userDetails },
+    jwt_secret_key,
+    {
+      expiresIn: "1d",
+    }
+  );
+  return reply.code(200).send({
+    error: false,
+    message: "Token refreshed Successfully!",
+    access_token: jsontoken,
+    refresh_token: refreshtoken,
+  });
+}
+   
+
+
 
 // get user details
 const getUserDetails = async (request,reply, db) => {
   try{
-    const userId = request.decoded.userDetails._id;
+    const userId = request.body.id;
     const user = await getUserInfo(userId, db);
       if (!user) {
-        return reply.code(500).send({
+        return reply.code(404).send({
           error: true,
           message: "User doesn't exist!",
         });

@@ -10,7 +10,7 @@ const checkToken = (request, reply, next) =>{
       token = token.slice(7);
       jwt.verify(token, jwt_secret_key, (err, decoded) => {
         if (err) {
-          return reply.code(500).send({
+          return reply.code(401).send({
             error: true,
             message: "Invalid Access Token!"
           });
