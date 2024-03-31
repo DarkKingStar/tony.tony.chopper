@@ -1,4 +1,4 @@
-const fastify = require("fastify")({ logger: false });
+const fastify = require("fastify")({ logger: true });
 const welcomeData = require("./welcome.js");
 const { getRoutes } = require("./route/getRoutes.js");
 const { postRoutesNoAuth, postRoutesAuth } = require("./route/postRoutes.js");
