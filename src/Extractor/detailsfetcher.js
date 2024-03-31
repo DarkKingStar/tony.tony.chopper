@@ -4,7 +4,7 @@ const axios = require('axios');
 
 
 const baseUrl = 'https://anitaku.to';
-const ajaxUrl = 'https://ajax.gogo-load.com/ajax';
+const ajaxUrl = 'https://ajax.gogocdn.net/ajax';
 
 
 const animeInfo = async (id) => {
@@ -53,6 +53,7 @@ const animeInfo = async (id) => {
         const movie_id = $('#movie_id').attr('value');
         const alias = $('#alias_anime').attr('value');
         const html = await axios.get(`${ajaxUrl}/load-list-episode?ep_start=${ep_start}&ep_end=${ep_end}&id=${movie_id}&default_ep=${0}&alias=${alias}`);
+        console.log(`${ajaxUrl}/load-list-episode?ep_start=${ep_start}&ep_end=${ep_end}&id=${movie_id}&default_ep=${0}&alias=${alias}`);
         const $$ = (0, cheerio.load)(html.data);
         animeInfo.episodes = [];
         $$('#episode_related > li').each((i, el) => {
