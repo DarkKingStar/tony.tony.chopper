@@ -4,7 +4,7 @@ const axios = require('axios');
 
 
 const baseUrl = 'https://anitaku.to/';
-const ajaxUrl = 'https://ajax.gogo-load.com/ajax';
+const ajaxUrl = 'https://ajax.gogocdn.net/ajax';
 
 
 

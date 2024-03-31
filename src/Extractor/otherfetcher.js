@@ -5,7 +5,7 @@ const { removeDuplicateInList,getGlobalTimeFromJST } = require("../../utils/help
 const { searchAnime } = require("./animefetcher");
 
 const baseUrl = "https://anitaku.to";
-const ajaxUrl = "https://ajax.gogo-load.com/";
+const ajaxUrl = "https://ajax.gogocdn.net/";
 
 const genreList = async (page = 1) => {
   try {
