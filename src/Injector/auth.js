@@ -60,7 +60,7 @@ const login = async (request, reply, db) => {
       });
 
       const refreshtoken = jwt.sign({ userDetails: user }, jwt_secret_key, {
-        expiresIn: '120s',
+        expiresIn: '300s',
       });
 
       return reply.code(200).send({
@@ -100,7 +100,7 @@ const regenerateToken = async (request, reply, db) => {
     { userDetails : userDetails },
     jwt_secret_key,
     {
-      expiresIn: "120s",
+      expiresIn: "300s",
     }
   );
   return reply.code(200).send({
