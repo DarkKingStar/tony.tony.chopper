@@ -56,11 +56,11 @@ const login = async (request, reply, db) => {
       user.password = undefined;
 
       const jsontoken = jwt.sign({ userDetails: user }, jwt_secret_key, {
-        expiresIn: '60s',
+        expiresIn: '30d',
       });
 
       const refreshtoken = jwt.sign({ userDetails: user }, jwt_secret_key, {
-        expiresIn: '300s',
+        expiresIn: '60d',
       });
 
       return reply.code(200).send({
@@ -93,14 +93,14 @@ const regenerateToken = async (request, reply, db) => {
     { userDetails: userDetails },
     jwt_secret_key,
     {
-      expiresIn: "60s",
+      expiresIn: "30d",
     }
   );
   const refreshtoken = jwt.sign(
     { userDetails : userDetails },
     jwt_secret_key,
     {
-      expiresIn: "300s",
+      expiresIn: "60d", 
     }
   );
   return reply.code(200).send({
