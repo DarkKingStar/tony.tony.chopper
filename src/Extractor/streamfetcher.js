@@ -10,23 +10,25 @@ const keys = {
     iv: crypto_js.enc.Utf8.parse('3134003223491201'),
 };
 
-const episodeSources = async (episodeId) => {
-    try {
-        const res = await axios.get(`${baseUrl}/${episodeId}`);
-        const $ = (0, cheerio.load)(res.data);
-        let serverUrl = new URL(`${$('#load_anime > div > div > iframe').attr('src')}`);
-        return {
-            headers: { Referer: serverUrl.href, watch: 'GogoCDN' },
-            sources: await GogoCDNExtractor(serverUrl),
-            download: `https://gogohd.net/download${serverUrl.search}`,
-        };
-    }
-    catch (err) {
-        return {
-            error: "true",
-            message: "Episode not found"
-        }
-    }
+
+
+const generateEncryptedAjaxParams = async ($, id) => {
+    const encryptedKey = crypto_js.AES.encrypt(id, keys.key, {
+        iv: keys.iv,
+    });
+    const scriptValue = $("script[data-name='episode']").attr('data-value');
+    const decryptedToken = crypto_js.AES.decrypt(scriptValue, keys.key, {
+        iv: keys.iv,
+    }).toString(crypto_js.enc.Utf8);
+    return `id=${encryptedKey}&alias=${id}&${decryptedToken}`;
+};
+
+
+const decryptAjaxData = async (encryptedData) => {
+    const decryptedData = crypto_js.enc.Utf8.stringify(crypto_js.AES.decrypt(encryptedData, keys.secondKey, {
+        iv: keys.iv,
+    }));
+    return JSON.parse(decryptedData);
 };
 
 const GogoCDNExtractor = async(videoUrl) =>{
@@ -88,24 +90,23 @@ const GogoCDNExtractor = async(videoUrl) =>{
     }
 }
 
-
-const generateEncryptedAjaxParams = async ($, id) => {
-    const encryptedKey = crypto_js.AES.encrypt(id, keys.key, {
-        iv: keys.iv,
-    });
-    const scriptValue = $("script[data-name='episode']").attr('data-value');
-    const decryptedToken = crypto_js.AES.decrypt(scriptValue, keys.key, {
-        iv: keys.iv,
-    }).toString(crypto_js.enc.Utf8);
-    return `id=${encryptedKey}&alias=${id}&${decryptedToken}`;
-};
-
-
-const decryptAjaxData = async (encryptedData) => {
-    const decryptedData = crypto_js.enc.Utf8.stringify(crypto_js.AES.decrypt(encryptedData, keys.secondKey, {
-        iv: keys.iv,
-    }));
-    return JSON.parse(decryptedData);
+const episodeSources = async (episodeId) => {
+    try {
+        const res = await axios.get(`${baseUrl}/${episodeId}`);
+        const $ = (0, cheerio.load)(res.data);
+        let serverUrl = new URL(`${$('#load_anime > div > div > iframe').attr('src')}`);
+        return {
+            headers: { Referer: serverUrl.href, watch: 'GogoCDN' },
+            sources: await GogoCDNExtractor(serverUrl),
+            download: `https://gogohd.net/download${serverUrl.search}`,
+        };
+    }
+    catch (err) {
+        return {
+            error: "true",
+            message: "Episode not found"
+        }
+    }
 };
 
 
