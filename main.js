@@ -65,7 +65,3 @@ fastify.listen(PORT, "0.0.0.0", (err, address) => {
   if (err) throw err;
   console.log(`server: ${address} listening on http://localhost:${PORT}`);
 });
-
-module.exports =  fastify;
-
- 

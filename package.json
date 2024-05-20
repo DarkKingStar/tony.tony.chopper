@@ -5,10 +5,10 @@
   },
   "version": "1.0.0",
   "description": "GogoAnime API to fetch anime and Streaming m3u8 files",
-  "main": "./api/index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "nodemon ./api/index.js",
-    "start": "node ./api/index.js"
+    "test": "nodemon main.js",
+    "start": "node main.js"
   },
   "keywords": [
     "GogoAnime",
@@ -38,7 +38,6 @@
     "moment-timezone": "^0.5.45",
     "mongodb": "^6.3.0",
     "mysql": "^2.18.1",
-    "mysql2": "^3.9.7",
     "nodemailer": "^6.9.11",
     "request": "^2.88.2",
     "sib-api-v3-sdk": "^8.5.0",
