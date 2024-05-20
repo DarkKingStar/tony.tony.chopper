@@ -1,12 +1,12 @@
 const fastify = require("fastify")({ logger: true });
-const welcomeData = require("./welcome.js");
-const { getRoutes } = require("./route/getRoutes.js");
-const { postRoutesNoAuth, postRoutesAuth } = require("./route/postRoutes.js");
-const { connectToMongoDB } = require("./config/mongodb.js");
+const welcomeData = require("../welcome.js");
+const { getRoutes } = require("../route/getRoutes.js");
+const { postRoutesNoAuth, postRoutesAuth } = require("../route/postRoutes.js");
+const { connectToMongoDB } = require("../config/mongodb.js");
 const PORT = process.env.PORT || 3000;
 const fs = require('fs');
 const path = require('path');
-const brevoEmailer = require("./SMTP/brevoEmailer.js");
+const brevoEmailer = require("../SMTP/brevoEmailer.js");
 fastify.register(require("@fastify/cors"), {
   origin: "*",
   credentials: true,
