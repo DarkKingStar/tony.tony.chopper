@@ -14,7 +14,7 @@ fastify.register(require("@fastify/cors"), {
 });
 
 fastify.register(async (instance, options) => {
-  // const db = await connectToMongoDB();
+  const db = await connectToMongoDB();
   // const db = {};
 
   instance.get("/", async (request, reply) => {
